@@ -1,0 +1,19 @@
+black==24.4.2
+fastapi==0.111.0
+uvicorn==0.30.1
+openai==1.35.5
+sentry-sdk==2.10.0
+# We need to pin this version of the library for now
+# as newer versions produce a "ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'" error
+pydantic==2.8.2
+# We need to pin this version of the library for now
+# as newer versions do not support hstore
+sqlmodel==0.0.19
+greenlet
+certifi==2024.7.4
+charset-normalizer==3.3.2
+h11==0.14.0
+httpx==0.27.0
+idna==3.7
+sniffio==1.3.1
+asgiref

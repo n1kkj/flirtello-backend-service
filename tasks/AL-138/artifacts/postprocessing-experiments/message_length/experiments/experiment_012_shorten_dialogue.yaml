@@ -1,0 +1,26 @@
+name: "Message Shortening - Dialogue Focus"
+parse_field: null # No XML parsing needed for transformation
+models:
+  - "openrouter://mistralai/ministral-8b"
+  - "openrouter://mistralai/mixtral-8x7b-instruct"
+  - "openrouter://google/gemma-3n-e4b-it"
+
+prompts:
+  - "prompts/make_short.md"
+
+messages:
+  - "test_messages/message_001_start.md"
+  - "test_messages/message_002_start.md"
+  - "test_messages/message_003_middle.md"
+  - "test_messages/message_004_middle.md"
+  - "test_messages/message_005_end.md"
+  - "test_messages/message_006_end.md"
+  - "test_messages/message_067_short_middle.md"
+  - "test_messages/message_068_short_middle.md"
+  - "test_messages/message_069_short_middle.md"
+  - "test_messages/message_070_medium_middle.md"
+  - "test_messages/message_071_medium_middle.md"
+  - "test_messages/message_072_medium_middle.md"
+  - "test_messages/message_073_long_middle.md"
+  - "test_messages/message_074_long_middle.md"
+  - "test_messages/message_075_long_middle.md"

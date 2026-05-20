@@ -1,0 +1,1252 @@
+---
+description: Если мы изменяем Telegram-бота, обязательно нужно включить эти правила.
+alwaysApply: false
+---
+# Правила разработки Telegram-бота для Flirtello
+
+Этот документ описывает ключевые принципы, архитектуру и best practices для работы с Telegram-ботом в репозитории `flirtello-backend-service`. Соблюдение этих правил критически важно для поддержания качества кода и предотвращения регрессий.
+
+## 1. Архитектура: Обзор структуры
+
+Telegram-бот построен на FastAPI и использует webhook-подход для получения обновлений от Telegram.
+
+### Основные компоненты:
+
+- **`src/telegram/bot.py`**: Точка входа FastAPI приложения
+  - Определяет webhook endpoint `/webhook/`
+  - Создает `RequestContext` для каждого запроса
+  - Делегирует обработку в `dispatcher.py` через background tasks
+  - Содержит `/process_payment` endpoint для обработки платежей
+
+- **`src/telegram/dispatcher.py`**: Центральный диспетчер
+  - Главная функция: `process_telegram_update()`
+  - Маршрутизирует разные типы update'ов к соответствующим handler'ам
+  - Определяет тип бота (mono/general) и токен
+  - Управляет персистентностью языка пользователя
+  - Обрабатывает все типы событий: messages, callbacks, payments, my_chat_member
+  - **Voice Processing Pipeline**: препроцессор (voice→text) → обработка → постпроцессор (text→voice)
+
+- **`src/telegram/handlers/`**: Обработчики различных типов событий
+  - **`commands/`**: Модульная система команд (каждая команда в отдельном файле)
+    - `__init__.py`: Централизованный роутер `route_command()`
+    - `start.py`: Команда `/start` - регистрация, выбор персонажа
+    - `gift.py`: Команда `/gift` - активация промо-кодов
+    - `lang.py`: Команда `/lang` - переключение языка
+    - `list.py`: Команда `/list` - список персонажей (только General Bot)
+    - `help.py`: Команда `/help` - справка (только General Bot)
+    - `stats.py`: Команда `/stats` - статистика (только General Bot)
+    - `story.py`: Команды `/story`, `/stories` - выбор storylines (только General Bot)
+    - `photo.py`: Команда `/photo` - запрос изображений
+    - `continue_cmd.py`: Команда `/continue` - продолжение диалога (аналог кнопки Continue)
+    - `me.py`: Команда `/me333` - debug информация о пользователе
+    - `flashdelme.py`: Команда `/flashdelme333` - удаление данных
+    - `flashbalance.py`: Команда `/flashbalance333` - управление балансом токенов (debug)
+  - `callbacks.py`: Обработка inline-кнопок (callback_query)
+  - `messages.py`: Обработка обычных текстовых сообщений
+  - `payments.py`: Обработка платежей через Telegram Stars
+  - `media.py`: Обработка запросов изображений (/photo)
+  - `service.py`: Служебные события (блокировка бота)
+  - `voice_preprocessor.py`: Препроцессор voice-сообщений (STT + billing)
+  - `voice_postprocessor.py`: Постпроцессор ответов (TTS + billing)
+
+- **`src/telegram/services/`**: Внешние сервисы
+  - **`speech/`**: Обработка голосовых сообщений
+    - `stt_service.py`: Speech-to-Text сервис (заглушка для OpenAI Whisper)
+    - `tts_service.py`: Text-to-Speech сервис (заглушка для ElevenLabs)
+
+- **`src/telegram/use_cases/`**: Бизнес-логика
+  - `start_chat_with_char.py`: Создание нового чата с персонажем
+  - `get_illustration.py`: Получение контекстных иллюстраций
+  - `get_response_from_character.py`: Генерация ответов от персонажа
+  - `process_payment.py`: Обработка платежей
+
+- **`src/telegram/context.py`**: RequestContext
+  - Объект контекста запроса, который передается через все слои
+  - Содержит: request_id, translator, user_language, telegram_chat_id, bot_token, user_id, timings
+  - **Voice Processing Flags**: `is_voice_message` (был ли запрос voice), `can_afford_tts` (может ли оплатить TTS)
+  - **user_id**: UUID пользователя, устанавливается в dispatcher после резолва пользователя
+  - Метод `record_timing()` для измерения производительности
+
+- **`src/telegram/keyboards.py`**: Генерация клавиатур
+  - Inline-клавиатуры для выбора персонажей
+  - Reply-клавиатуры для быстрых действий (Get Image, Continue)
+  - `create_context_keyboard()` - клавиатура с кнопками "Get Image" и "Continue"
+  - Локализация текстов кнопок
+
+- **`src/telegram/api_client.py`**: Взаимодействие с Telegram API
+  - `send_tg_message()`: Отправка текстовых сообщений
+  - `send_tg_chat_action_typing()`: Индикация набора текста
+  - `download_and_send_image()`: Отправка изображений
+
+## 2. Два типа ботов: Mono и General
+
+Система поддерживает два архитектурных паттерна работы ботов:
+
+### General Bot (Общий бот)
+- **Назначение**: Один бот для всех персонажей
+- **Токен**: Используется `TELEGRAM_BOT_TOKEN` из конфига
+- **Логика выбора персонажа**: 
+  - Пользователь сначала выбирает персонажа через `/list` или `/start char_123`
+  - `active_char_id` определяется из настроек пользователя в БД
+  - Если персонаж не выбран, бот показывает "gatekeeper" сообщение с выбором
+- **Use case**: Основной production бот
+
+### Mono Bot (Моно-бот)
+- **Назначение**: Отдельный бот для каждого персонажа
+- **Токен**: Используется персональный токен из `personal_tokens[char_id]` или `PERSON_BOT_TOKEN_{char_id}` env variable
+- **Логика выбора персонажа**: 
+  - `active_char_id` всегда равен `MONO_CHAR_ID`
+  - Выбор персонажа не требуется
+  - Команды `/list`, `/help`, `/stats` отключены
+- **Use case**: Маркетинговые кампании, тестирование отдельных персонажей
+
+### Определение типа бота в коде:
+
+См. `src/telegram/dispatcher.py` - функция `process_telegram_update()`
+
+## 3. RequestContext: Единый объект контекста
+
+**КРИТИЧЕСКИ ВАЖНО**: `RequestContext` должен передаваться через все функции обработки запроса.
+
+### Зачем нужен контекст:
+- **Трассировка**: Уникальный `request_id` для всех логов одного запроса
+- **Перевод**: Доступ к `translator` для локализации сообщений
+- **Язык**: `user_language` - определенный язык пользователя
+- **Производительность**: `timings` - измерение времени выполнения операций
+- **Telegram**: `telegram_chat_id`, `bot_token` для отправки сообщений
+
+### Использование:
+
+- Создание контекста: `src/telegram/bot.py` - webhook endpoint
+- Передача через функции: все handlers и use cases принимают `context: RequestContext`
+- Таймеры: используйте `context.record_timing("operation_name")`
+- Логирование: всегда включайте `context.request_id` для трассировки
+
+## 4. Language Persistence: Управление языком пользователя
+
+Система автоматически сохраняет и восстанавливает язык пользователя.
+
+### Источники языка (по приоритету):
+1. **User Override** (самый высокий приоритет): Пользователь явно выбрал язык через `/lang`
+   - Сохраняется в `user_settings` с ключом `LANGUAGE_OVERRIDE_BY_USER = true`
+   - Не меняется автоматически
+2. **Telegram Client Language**: Язык из `from.language_code` в update'е
+   - Автоматически синхронизируется, если override не установлен
+   - Сохраняется в `user_settings` для будущих запросов
+
+### Логика определения языка:
+
+См. `src/telegram/dispatcher.py` - секция "Single Source of Truth for Language Determination"
+
+Приоритет источников:
+1. User Override (команда `/lang`) - наивысший приоритет
+2. Telegram Client Language (автоматическая синхронизация)
+3. Default fallback ("en")
+
+### Команда /lang:
+
+- Позволяет пользователю явно выбрать язык
+- Устанавливает `LANGUAGE_OVERRIDE_BY_USER = true`
+- Обновляет Chat Menu Button с локализованным текстом
+- После выбора язык больше не меняется автоматически
+
+## 5. Translation Flow: Английский в БД, перевод для отображения
+
+**ЗОЛОТОЕ ПРАВИЛО**: Все сообщения в БД хранятся ТОЛЬКО на английском языке.
+
+### Почему English-Only DB Policy:
+- Единый источник истины для контента
+- Упрощение работы с LLM (большинство моделей лучше работают с английским)
+- Гибкость локализации без миграций БД
+- Возможность A/B тестирования переводов
+
+### Workflow перевода:
+
+См. `src/telegram/use_cases/start_chat_with_char.py` и `src/telegram/use_cases/get_response_from_character.py`
+
+Этапы:
+1. Сохранение в БД на английском (всегда)
+2. Перевод ТОЛЬКО для отображения пользователю
+3. Отправка переведенного текста
+
+Важно: используйте `context.translator` и `context.user_language` для перевода
+
+### Translation Memory (TM):
+
+- Используется `SQLTranslationMemory` для кеширования переводов
+- `context_key` содержит хеш текста для дедупликации
+- Переводы переиспользуются для одинаковых сообщений
+- LLM-based перевод только для новых текстов
+
+### UriLLMClient: Универсальный LLM клиент через URL
+
+**Расположение**: `src/translator/llm_client_uri.py`
+
+**Назначение**: Универсальный клиент для работы с различными LLM провайдерами через URL-схему. Поддерживает настройку провайдеров и параметров через query-параметры.
+
+#### Поддерживаемые схемы URL
+
+1. **`aisuite://`** - Использование aisuite библиотеки для работы с различными провайдерами
+2. **`openrouter://`** - Прямое подключение к OpenRouter API
+
+#### Формат URL для aisuite
+
+```
+aisuite://<provider>/<model>?<parameters>
+```
+
+**Примеры**:
+```
+aisuite://openai/gpt-4?temperature=0.5&max_tokens=1000
+aisuite://openai/qwen-mt-turbo?pc_base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1&pc_api_key=sk-xxx&sys_role=user
+```
+
+#### Параметры URL
+
+**Параметры с префиксом `pc_` (Provider Config)**:
+- Параметры с префиксом `pc_` передаются в конфигурацию провайдера при инициализации
+- Префикс `pc_` удаляется перед передачей в провайдер
+- Эти параметры НЕ передаются в completion API
+
+**Примеры**:
+- `pc_api_key=sk-xxx` → передается как `api_key` в конфигурацию провайдера
+- `pc_base_url=https://example.com/v1` → передается как `base_url` в конфигурацию провайдера
+
+**Служебные параметры**:
+- `timeout` - таймаут для HTTP запросов (только для openrouter)
+- `sort` / `priority` - сортировка провайдеров в OpenRouter (price, throughput, latency)
+- `sys_role` - обработка system messages (см. ниже)
+
+**Параметры completion API**:
+- Все остальные параметры (без префикса `pc_` и не служебные) пробрасываются напрямую в completion API
+- Примеры: `temperature`, `max_tokens`, `top_p`, `frequency_penalty`, `presence_penalty`, `n`, `logprobs`, `top_logprobs`
+
+#### Параметр sys_role
+
+**Назначение**: Управление обработкой system messages для провайдеров, которые не поддерживают роль `system`.
+
+**Значения**:
+- `sys_role=user` - system message объединяется с первым user message перед отправкой в API
+- Если не указан - system messages передаются как есть (стандартное поведение OpenAI API)
+
+**Использование**:
+```
+aisuite://openai/qwen-mt-turbo?pc_base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1&pc_api_key=sk-xxx&sys_role=user
+```
+
+**Когда использовать**:
+- Для провайдеров, которые не поддерживают роль `system` (например, Alibaba Cloud dashscope)
+- Когда нужно передать инструкции в user message вместо system message
+
+#### Использование в коде
+
+**Создание клиента**:
+```python
+from src.translator.llm_client_uri import UriLLMClient
+
+# Базовое использование
+client = UriLLMClient("aisuite://openai/gpt-4")
+
+# С кастомным system prompt
+client = UriLLMClient(
+    "aisuite://openai/qwen-mt-turbo?pc_base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1&pc_api_key=sk-xxx&sys_role=user",
+    system_prompt="You are a professional translation engine."
+)
+
+# Вызов
+messages = [
+    {"role": "system", "content": "Translate from en to ru."},
+    {"role": "user", "content": "Hello, how are you?"}
+]
+response = client.chat(messages)
+```
+
+**Конфигурация через переменную окружения**:
+```bash
+TRANSLATOR_LLM_URL="aisuite://openai/qwen-mt-turbo?pc_base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1&pc_api_key=sk-xxx&sys_role=user&temperature=0.2"
+```
+
+#### Внутренняя реализация
+
+**Создание клиента** (`create_llm_client_from_url`):
+1. Парсинг URL схемы, провайдера, модели и параметров
+2. Для `aisuite://`:
+   - Извлечение параметров с префиксом `pc_` в конфигурацию провайдера
+   - Создание `ai.Client()` с конфигурацией провайдера
+   - Возврат клиента, model_id и оставшихся параметров
+3. Для `openrouter://`:
+   - Создание OpenAI клиента с настройками OpenRouter
+   - Извлечение `timeout` из параметров
+
+**Обработка сообщений** (`_chat`):
+1. Обработка `sys_role` (если указан) - объединение system и user messages
+2. Проброс параметров из URL в completion API (кроме служебных и `pc_*`)
+3. Вызов completion API через aisuite или OpenAI клиент
+
+#### Best Practices
+
+1. **Используйте `pc_` префикс** для параметров конфигурации провайдера (api_key, base_url)
+2. **Используйте `sys_role=user`** для провайдеров без поддержки system role
+3. **Параметры completion API** передавайте без префиксов (temperature, max_tokens)
+4. **Экранируйте URL** при передаче через переменные окружения
+5. **Тестируйте URL** через curl перед использованием в коде
+
+#### Примеры конфигураций
+
+**OpenAI через aisuite**:
+```
+aisuite://openai/gpt-4?temperature=0.7&max_tokens=500
+```
+
+**Alibaba Cloud Dashscope**:
+```
+aisuite://openai/qwen-mt-turbo?pc_base_url=https://dashscope-intl.aliyuncs.com/compatible-mode/v1&pc_api_key=sk-xxx&sys_role=user&temperature=0.2
+```
+
+**OpenRouter**:
+```
+openrouter://anthropic/claude-3-opus?timeout=60&sort=price
+```
+
+## 6. Обработка различных типов Update'ов
+
+Telegram отправляет различные типы update'ов. Каждый обрабатывается по-своему.
+
+### Порядок обработки:
+
+См. `src/telegram/dispatcher.py` - функция `process_telegram_update()`
+
+Порядок обработки update'ов:
+1. `my_chat_member` - логирование блокировок
+2. `webapp_data` - преобразуется в message
+3. `pre_checkout_query` - валидация платежа
+4. `successful_payment` - начисление токенов
+5. `callback_query` - inline кнопки
+6. `edited_message` - отклоняется
+7. `message` - текстовые сообщения и команды
+
+### Важные детали:
+
+- **edited_message**: Явно отклоняется с сообщением пользователю
+- **voice messages**: Полностью поддерживаются через препроцессор/постпроцессор (см. раздел 7)
+- **non-text messages**: Если нет `text` в message после препроцессора, обработка прерывается
+
+## 7. Voice Messages: Препроцессор/Постпроцессор Архитектура
+
+**ВАЖНО**: Voice-сообщения обрабатываются через pipeline из трех стадий:
+
+### Pipeline обработки voice:
+
+```
+1. ПРЕПРОЦЕССОР (voice_preprocessor.py)
+   ├─ Проверка: есть ли voice в data?
+   ├─ Billing Check: достаточно ли токенов на STT?
+   │  └─ Если НЕТ → отправить клавиатуру покупки → STOP
+   ├─ Transaction: списать токены за STT
+   ├─ STT: voice → text (через OpenAI Whisper API)
+   ├─ Замена: data["message"]["text"] = recognized_text
+   ├─ Billing Check: достаточно ли токенов на TTS?
+   └─ Context Flags: is_voice_message=True, can_afford_tts=True/False
+
+2. ОСНОВНАЯ ОБРАБОТКА (единый путь для text и voice!)
+   ├─ route_command() или process_regular_message()
+   └─ Генерация ответа от персонажа
+
+3. ПОСТПРОЦЕССОР (voice_postprocessor.py)
+   ├─ Проверка: is_voice_message AND can_afford_tts?
+   ├─ Transaction: списать токены за TTS
+   ├─ TTS: text → voice (через ElevenLabs API)
+   └─ Отправка: voice response вместо текста
+```
+
+### Ключевые принципы:
+
+1. **Единый путь обработки**: После препроцессора voice-сообщение выглядит как обычное текстовое
+2. **Ранние проверки биллинга**: Оба баланса (STT и TTS) проверяются в препроцессоре
+3. **Graceful degradation**: Если нет денег на TTS - отвечаем текстом, не блокируя ответ
+4. **Context-based flags**: Вся информация о voice передается через `RequestContext`
+5. **Отдельные транзакции**: STT и TTS списываются отдельно, в разные моменты
+
+### Voice Preprocessor (src/telegram/handlers/voice_preprocessor.py)
+
+**Функция**: `preprocess_voice_to_text()`
+
+**Задачи**:
+- Обнаружение voice-сообщения в data
+- Проверка баланса пользователя на STT
+- Отправка клавиатуры покупки токенов, если недостаточно средств
+- Списание токенов за STT (paid action: `VOICE_TO_TEXT`)
+- Скачивание voice file из Telegram
+- Конвертация voice → text через STT сервис
+- Замена data["message"]["text"] на распознанный текст
+- Проверка баланса на TTS и установка флага `can_afford_tts`
+- Установка флага `is_voice_message = True`
+
+**Возвращает**:
+- `data` (модифицированный) - если обработка успешна
+- `None` - если недостаточно токенов на STT (обработка прекращается)
+
+**Интеграция с биллингом**:
+```python
+# Проверка баланса
+stt_action = await async_get_paid_action_dataset(PaidActions.VOICE_TO_TEXT.value)
+await async_check_user_have_enough_currency(user.id, stt_action.price, CurrenciesTypes.TOKEN.value)
+
+# Списание за STT
+await async_process_paid_action(user.id, stt_action, SourceNames.TELEGRAM_VOICE_MESSAGE.value, metadata)
+
+# Проверка баланса на TTS (не блокирует, только флаг)
+tts_action = await async_get_paid_action_dataset(PaidActions.TEXT_TO_VOICE.value)
+try:
+    await async_check_user_have_enough_currency(user.id, tts_action.price, CurrenciesTypes.TOKEN.value)
+    context.can_afford_tts = True
+except NotEnoughCurrencyError:
+    context.can_afford_tts = False
+```
+
+### Voice Postprocessor (src/telegram/handlers/voice_postprocessor.py)
+
+**Функция**: `postprocess_text_to_voice()`
+
+**Задачи**:
+- Проверка флагов `is_voice_message` и `can_afford_tts`
+- Если оба True: конвертация text → voice и отправка голосом
+- Если False: ничего не делаем (ответ уже отправлен текстом)
+- Списание токенов за TTS (paid action: `TEXT_TO_VOICE`)
+- Graceful fallback при ошибках (отправка текста)
+
+**Вызов**:
+```python
+if response_dto and response_dto.messages:
+    for msg in response_dto.messages:
+        if msg.message:
+            await postprocess_text_to_voice(
+                msg.message,
+                sender_chat_id,
+                token_to_use,
+                user,
+                context,
+            )
+```
+
+**Интеграция с биллингом**:
+```python
+# Списание за TTS
+tts_action = await async_get_paid_action_dataset(PaidActions.TEXT_TO_VOICE.value)
+await async_process_paid_action(
+    user.id,
+    tts_action,
+    SourceNames.TELEGRAM_VOICE_MESSAGE_RESPONSE.value,
+    metadata
+)
+```
+
+### Speech Services (src/telegram/services/speech/)
+
+**STT Service** (`stt_service.py`):
+- **Назначение**: Конвертация audio → text
+- **Рекомендуемая реализация**: OpenAI Whisper API
+- **Функция**: `async def transcribe(audio_data: bytes, language: str = "auto") -> str`
+- **Статус**: Заглушка (NotImplementedError)
+
+**TTS Service** (`tts_service.py`):
+- **Назначение**: Конвертация text → audio
+- **Рекомендуемая реализация**: ElevenLabs API
+- **Функция**: `async def synthesize(text: str, voice_id: str, language: str) -> bytes`
+- **Статус**: Заглушка (NotImplementedError)
+
+### RequestContext Voice Flags
+
+```python
+@dataclass
+class RequestContext:
+    # ... existing fields ...
+    is_voice_message: bool = False  # Был ли изначальный запрос voice-сообщением
+    can_afford_tts: bool = False    # Может ли пользователь оплатить TTS ответ
+```
+
+**Использование**:
+- `is_voice_message`: Устанавливается препроцессором, проверяется постпроцессором
+- `can_afford_tts`: Устанавливается препроцессором после проверки баланса на TTS
+
+### Best Practices для Voice:
+
+1. **Не изменяйте основную логику**: Voice должен быть прозрачным для core logic
+2. **Ранние проверки биллинга**: Проверяйте баланс до начала дорогих операций
+3. **Graceful degradation**: Всегда имейте fallback (текстовый ответ)
+4. **Отдельные транзакции**: STT и TTS списываются независимо
+5. **Используйте Context Flags**: Передавайте информацию через RequestContext, не через data
+6. **Единый путь**: После препроцессора voice = text для основной логики
+
+## 8. Обработка команд: Модульная архитектура
+
+### Централизованный роутер команд
+
+**ВАЖНО**: Все команды обрабатываются через единую точку входа - функцию `route_command()`.
+
+**Расположение**: `src/telegram/handlers/commands/__init__.py`
+
+**Функция**: `async def route_command(...) -> bool`
+
+**Логика**:
+```python
+# Dispatcher вызывает роутер
+command_handled = await route_command(
+    text=text,
+    data=data,
+    bot_type_is_mono=bot_type_is_mono,
+    # ... все необходимые параметры
+)
+
+if command_handled:
+    await session.commit()
+    return  # Команда обработана, завершаем
+    
+# Если False - это обычное сообщение, не команда
+```
+
+**Возвращает**:
+- `True` - если команда распознана и обработана
+- `False` - если это не команда или неизвестная команда
+
+### Структура команд (handlers/commands/)
+
+Каждая команда в отдельном файле для максимальной модульности:
+
+#### start.py - Команда /start
+- **Назначение**: Регистрация, выбор персонажа, активация gift-кодов
+- **Функция**: `process_start_command()`
+- **Поддерживает payloads**: 
+  - `char_{id}` - выбор персонажа
+  - `char_{id}_config_{config_id}` - с конфигом
+  - `char_{id}_archive` - с архивацией
+  - `_chat_{id}_story_{config}_src_{src}_lang_{lang}` - полный payload из WebApp
+
+#### gift.py - Команда /gift
+- **Назначение**: Активация промо-кодов
+- **Функция**: `process_gift_command()`
+- **Формат**: `/gift PROMO_CODE`
+
+#### lang.py - Команда /lang
+- **Назначение**: Переключение языка интерфейса
+- **Функция**: `process_lang_command()`
+- **Устанавливает**: `LANGUAGE_OVERRIDE_BY_USER = true`
+- **Обновляет**: Chat Menu Button с локализованным текстом
+
+#### list.py - Команда /list
+- **Назначение**: Показать список доступных персонажей
+- **Функция**: `process_list_command()`
+- **Только для**: General Bot
+
+#### help.py - Команда /help
+- **Назначение**: Показать справку по доступным командам
+- **Функция**: `process_help_command()`
+- **Только для**: General Bot
+
+#### stats.py - Команда /stats
+- **Назначение**: Показать статистику бота
+- **Функция**: `process_stats_command()`
+- **Только для**: General Bot
+
+#### story.py - Команды /story, /stories
+- **Назначение**: Показать список storylines (configs)
+- **Функция**: `process_story_command()`
+- **Только для**: General Bot
+
+#### photo.py - Команда /photo
+- **Назначение**: Запросить изображение от персонажа
+- **Функция**: `process_photo_command()`
+- **Обертка над**: `handle_photo_request()` из `handlers/media.py`
+
+#### continue_cmd.py - Команда /continue
+- **Назначение**: Продолжить диалог с персонажем (аналог кнопки Continue)
+- **Функция**: `process_continue_command()`
+- **Логика**: Заменяет текст команды на локализованное "продолжай" и передает в обычный флоу обработки сообщений
+- **Отличие от кнопки**: Сообщение с командой НЕ удаляется из чата (в отличие от кнопки Continue)
+
+#### me.py - Команда /me333
+- **Назначение**: Debug информация о пользователе
+- **Функция**: `process_me_command()`
+- **Для разработки**: Показывает user_id, настройки, статус
+
+#### flashdelme.py - Команда /flashdelme333
+- **Назначение**: Удаление данных пользователя
+- **Функция**: `process_flashdelme_command()`
+- **ВНИМАНИЕ**: Необратимая операция!
+
+#### flashbalance.py - Команда /flashbalance333
+- **Назначение**: Управление балансом токенов пользователя (debug команда)
+- **Функция**: `process_flashbalance_command()`
+- **Формат команды**:
+  - `/flashbalance333` - показать текущий баланс токенов
+  - `/flashbalance333 <amount>` - установить баланс токенов (создает корректирующую транзакцию)
+  - `/flashbalance333 list` - показать последние 10 транзакций пользователя
+- **Примеры**:
+  - `/flashbalance333` → показать текущий баланс
+  - `/flashbalance333 100` → установить баланс 100 токенов
+  - `/flashbalance333 0` → обнулить баланс
+  - `/flashbalance333 1.5` → установить баланс 1.5 токена
+  - `/flashbalance333 list` → показать последние транзакции
+- **Особенности**:
+  - Использует `set_user_balance_via_correction()` для изменения баланса через корректирующую транзакцию
+  - Все изменения отражаются в таблице `content.transactions` для audit trail
+  - Транзакции фильтруются по парам (убираются дубликаты через `correlation_id`)
+  - Показывает транзакции с точки зрения пользователя (пополнения/списания)
+  - Определяет тип операции по `service_id` (PaidAction, TokenPack, GiftCode) или `additional_data`
+- **ВАЖНО**: Только для тестирования/отладки!
+
+### Список команд General Bot:
+
+- `/start [payload]` - Начать чат с персонажем (с payload или без)
+- `/list` - Показать список доступных персонажей
+- `/help` - Показать справку по командам
+- `/stats` - Показать статистику бота
+- `/story` или `/stories` - Показать список storylines (configs)
+- `/photo` - Запросить изображение от персонажа
+- `/continue` - Продолжить диалог (аналог кнопки Continue)
+- `/gift <code>` - Активировать подарочный код
+- `/lang` - Изменить язык бота
+- `/me333` - Debug информация (для разработки)
+- `/flashdelme333` - Удалить данные пользователя (для разработки)
+- `/flashbalance333 [amount|list]` - Управление балансом токенов (для разработки)
+
+### Команды Mono Bot:
+
+- `/start [payload]` - Начать чат (персонаж уже определен)
+- `/photo` - Запросить изображение
+- `/continue` - Продолжить диалог
+- `/gift <code>` - Активировать подарочный код
+- `/lang` - Изменить язык
+- `/me333` - Debug информация
+- `/flashdelme333` - Удалить данные
+- `/flashbalance333 [amount|list]` - Управление балансом токенов
+
+### Gatekeeper Logic (только General Bot):
+
+См. `src/telegram/dispatcher.py` - логика проверки `active_char_id`
+
+**ВАЖНО**: Gatekeeper проверяется **ДО** роутинга команд!
+
+Если пользователь пытается выполнить действие без выбора персонажа:
+- Показывается клавиатура выбора персонажа
+- Обработка прерывается до выбора
+- Применяется только для General Bot
+- Применяется для: `/photo`, `get_image_command_text`, `continue_command_text`, обычные сообщения
+
+### Добавление новой команды:
+
+1. **Создайте файл** `handlers/commands/my_command.py`
+2. **Реализуйте функцию** `async def process_my_command(...)`
+3. **Импортируйте в** `handlers/commands/__init__.py`
+4. **Добавьте в** `route_command()`:
+   ```python
+   elif text == "/mycommand":
+       await process_my_command(**kwargs)
+       return True
+   ```
+5. **Обновите документацию** в этом файле
+
+## 9. Use Cases: Бизнес-логика
+
+Use cases содержат основную бизнес-логику и должны быть максимально независимы.
+
+### start_chat_with_char.py
+
+**Назначение**: Создание нового чата с персонажем и отправка первых сообщений.
+
+**Два режима работы**:
+
+1. **С config_id (storyline)**: 
+   - Вызывает LLM Service API для генерации storyline-based начала
+   - Получает готовые сообщения от API
+   - Переводит каждое сообщение для пользователя
+   
+2. **Без config_id (legacy/basic)**:
+   - Использует `ContentContext.first_interaction` из БД
+   - Отправляет: onboarding_message → first_image + scenario → first_message
+   - Переводит каждое сообщение индивидуально
+
+**Ключевые принципы**:
+- Всегда принимает `RequestContext`
+- Сохраняет в БД только английский текст
+- Переводит для отображения пользователю
+- Измеряет время выполнения каждого шага
+- Обрабатывает архивацию старых сообщений при `archive_existing_chat=True`
+
+См. `src/telegram/use_cases/start_chat_with_char.py`
+
+### get_illustration.py
+
+**Назначение**: Генерация контекстных иллюстраций на основе истории чата.
+
+### get_response_from_character.py
+
+**Назначение**: Получение ответа от персонажа через LLM Service.
+
+## 10. Background Tasks и Асинхронность
+
+**ВАЖНО**: Telegram webhook должен отвечать быстро (< 60 секунд), поэтому обработка выполняется в background task.
+
+### Реализация:
+
+См. `src/telegram/bot.py` - webhook endpoint
+
+Все обработки выполняются в background tasks для быстрого ответа Telegram.
+
+### Правила работы с async:
+
+1. **Use async/await**: Все IO-операции должны быть асинхронными
+2. **AsyncSession**: Используйте `AsyncSession` из SQLAlchemy для БД
+3. **async_adapters**: Для sync функций используйте обертки из `async_adapters.py`
+4. **No blocking calls**: Избегайте блокирующих вызовов в async функциях
+
+## 11. Error Handling и Sentry
+
+### Обработка ошибок:
+
+См. `src/telegram/dispatcher.py` - блок try/except в `process_telegram_update()`
+
+Правила:
+- Всегда делайте `session.commit()` в конце успешной обработки
+- Делайте `session.rollback()` в except блоке
+- Используйте `sentry_sdk.capture_exception(e)` для неожиданных ошибок
+- Используйте `sentry_sdk.capture_message()` для важных событий
+
+### Логирование:
+
+- Всегда включайте `context.request_id` для трассировки
+- Используйте `exc_info=True` для ошибок
+- Логируйте performance metrics в конце обработки
+
+## 12. Работа с клавиатурами
+
+### Типы клавиатур:
+
+См. `src/telegram/keyboards.py`
+
+Telegram-бот использует два основных типа клавиатур:
+
+- **Inline Keyboards**: Кнопки под сообщением, обрабатываются через `callback_query`
+- **Reply Keyboards (Context Keyboard)**: Постоянная клавиатура внизу экрана, обрабатывается как обычное текстовое сообщение
+- **Chat Menu Button**: WebApp кнопка в меню чата
+
+Все клавиатуры должны быть локализованы через gettext.
+
+### Inline-клавиатуры (кнопки под сообщением)
+
+Inline-клавиатуры отображаются непосредственно под сообщением и обрабатываются через `callback_query` в `handlers/callbacks.py`.
+
+#### 1. Клавиатура покупки токенов (при нехватке токенов)
+
+**Функция**: `create_get_tokens_keyboard(language_code)`
+
+**Назначение**: Отображается когда у пользователя недостаточно токенов для выполнения действия.
+
+**Содержит**:
+- Кнопка "Get Tokens 💝" - открывает WebApp для покупки токенов
+
+**Использование**:
+- Отправляется через `send_no_tokens_message_with_keyboards()` в `src/telegram/lib/insufficient_balance.py`
+- Показывается при нехватке токенов для:
+  - Обработки голосовых сообщений (STT)
+  - Генерации ответа от персонажа
+  - Запроса изображения
+  - Продолжения диалога
+
+**Особенности**:
+- Использует WebApp для открытия страницы покупки токенов
+- Локализована на языке пользователя
+- Отображается только при недостатке токенов (не заменяет контекстную клавиатуру)
+
+#### 2. Клавиатура выбора персонажа
+
+**Функция**: `create_character_selection_keyboard(session, ...)`
+
+**Назначение**: Позволяет пользователю выбрать персонажа для начала чата.
+
+**Содержит**:
+- Кнопки с именами персонажей (до 8 персонажей, по 2 в ряду)
+- Опциональная кнопка "✨ Open all characters" для открытия WebApp со всеми персонажами
+
+**Использование**:
+- Показывается при команде `/list` (General Bot)
+- Показывается в gatekeeper сообщении, если пользователь не выбрал персонажа
+- Обрабатывается через `handle_callback_query()` в `handlers/callbacks.py`
+
+**Особенности**:
+- Имена персонажей переводятся на язык пользователя
+- Callback data: `/start {char_id}` или `/start {char_id} {config_id}`
+- После выбора персонажа сообщение с клавиатурой удаляется
+
+#### 3. Клавиатура выбора конфигурации (storyline)
+
+**Функции**:
+- `create_all_configs_selection_keyboard()` - все конфигурации всех персонажей
+- `create_config_selection_keyboard()` - конфигурации конкретного персонажа
+
+**Назначение**: Позволяет выбрать storyline (конфигурацию) для персонажа.
+
+**Содержит**:
+- Кнопки с названиями конфигураций (по 2 в ряду)
+- Опциональная кнопка для открытия WebApp
+
+**Особенности**:
+- Названия конфигураций переводятся на язык пользователя
+- Callback data: `/start {char_id} {config_id}`
+
+### Контекстная клавиатура (Reply Keyboard)
+
+**Функция**: `create_context_keyboard(language_code)`
+
+**Назначение**: Постоянная клавиатура внизу экрана для быстрого доступа к основным действиям.
+
+**Содержит**:
+- Кнопка "Get Image ❤️‍🔥" - запрос изображения от персонажа (эквивалент команды `/photo`)
+- Кнопка "Continue 💬" - продолжение диалога (эквивалент команды `/continue`)
+
+**Особенности**:
+- Обе кнопки в одном ряду
+- Отображается после каждого ответа персонажа
+- Локализована на языке пользователя
+- Параметры: `resize_keyboard=True`, `one_time_keyboard=False`, `persistent=True`
+- Обрабатывается как обычное текстовое сообщение (не через `callback_query`)
+- **НЕ отображается** когда у пользователя недостаточно токенов (в этом случае показывается только inline-клавиатура с кнопкой "Get Tokens")
+
+**Обработка кнопок**:
+- "Get Image ❤️‍🔥": обрабатывается как команда `/photo` через `handlers/commands/photo.py`
+- "Continue 💬": обрабатывается через препроцессор `button_continue_preprocessor.py` (удаляет сообщение и заменяет на "продолжай")
+
+### Обработка кнопки Continue
+
+**Препроцессор**: `src/telegram/handlers/button_continue_preprocessor.py`
+
+**Логика обработки** (в `dispatcher.py`):
+1. Проверка текста сообщения на совпадение с локализованным текстом кнопки "Continue 💬"
+2. Удаление сообщения с кнопкой из чата (через `delete_message`)
+3. Замена текста на локализованное "продолжай" через `preprocess_button_continue`
+4. Передача в обычный флоу обработки сообщений (`process_regular_message`)
+
+**Команда `/continue`**:
+- Обрабатывается через `route_command()` в `handlers/commands/__init__.py`
+- Заменяет текст на локализованное "продолжай"
+- Сообщение с командой НЕ удаляется (в отличие от кнопки)
+- Отправляет аналитическое событие `tg_continue_command`
+
+## 13. Платежи через Telegram Stars
+
+### Два этапа обработки:
+
+См. `src/telegram/handlers/payments.py`
+
+1. **pre_checkout_query**: Валидация перед покупкой
+   - Проверка доступности товара
+   - Ответ: `{"ok": true}` или `{"ok": false, "error_message": "..."}`
+
+2. **successful_payment**: Начисление после оплаты
+   - Начисление токенов/подписки пользователю
+   - Отправка подтверждения
+
+### Endpoint для создания invoice:
+
+См. `src/telegram/bot.py` - `/process_payment` endpoint
+
+Включает валидацию Telegram signature и создание invoice через use case.
+
+## 14. Maintenance Mode
+
+Быстрое отключение бота через переменную окружения `MM`.
+
+См. `src/telegram/dispatcher.py` - проверка `os.environ.get("MM")`
+
+**Использование**: `export MM=1` перед запуском бота.
+
+## 15. Системные приветственные сообщения и интеграция с квизом
+
+### Концепция системных сообщений
+
+**ВАЖНО**: Сообщения делятся на два типа:
+1. **Системные сообщения** (`message_type=None`) - от платформы Flirtello
+2. **Сообщения персонажа** (`message_type='ONBOARDING_TEXT'/'GREETING_TEXT'/etc`) - от AI-персонажа
+
+**ЗОЛОТОЕ ПРАВИЛО**: Системные сообщения всегда добавляются **ПЕРЕД** сообщениями персонажа. Сообщения персонажа **НИКОГДА** не изменяются.
+
+### Четыре сценария старта чата
+
+Система поддерживает 4 различных сценария в зависимости от источника старта и статуса пользователя:
+
+#### Сценарий 1: Новый пользователь + старт из квиза
+```
+1. quiz_onboarding_message (системное)
+   "🎉 Добро пожаловать в мир Flirtello!
+    Здесь можно безопасно воплощать фантазии...
+    Похоже, ты нашёл свой идеальный мэтч. 💫
+    🎁 Дарим тебе 10 токенов..."
+2. Подсказка про /start (системное)
+3. Сообщения от персонажа (ONBOARDING_TEXT, GREETING_TEXT, etc)
+```
+
+#### Сценарий 2: Новый пользователь + обычный старт
+```
+1. Обычное приветствие (системное)
+   "🎉 Добро пожаловать в мир Flirtello!
+    Здесь можно безопасно воплощать фантазии...
+    🎁 Дарим тебе 10 токенов..."
+2. Подсказка про /start (системное)
+3. Сообщения от персонажа
+```
+
+#### Сценарий 3: Существующий пользователь + старт из квиза
+```
+1. quiz_match_message (системное)
+   "Похоже, ты нашёл свой идеальный мэтч. 💫
+    Начни общение — напиши что-нибудь. 😉"
+2. Подсказка про /start (системное)
+3. Сообщения от персонажа
+```
+
+#### Сценарий 4: Существующий пользователь + обычный старт
+```
+1. Подсказка про /start (системное)
+2. Сообщения от персонажа
+```
+
+### Передача internal_source из WebApp
+
+#### Frontend (flirtello-frontend)
+
+См. `src/lib/webhook-params.ts`
+
+WebApp передает источник старта через параметр `src` в команде `/start`.
+
+Формат команды: `/start _chat_{id}_story_{config}_src_{src}_lang_{lang}`
+
+Использование в квизе: передается `src='quiz'`
+
+#### Backend (flirtello-backend-service)
+
+**1. Парсинг команды**
+
+См. `src/telegram/handlers/utils.py` - `StartCommandPayload` и `parse_start_command_payload()`
+
+Поля:
+- `internal_source` - внутренний источник (quiz, etc)
+- `mkt_source` - маркетинговый источник (рекламные кампании)
+- `language` - язык пользователя
+
+**2. Сохранение в контекст**
+
+См. `src/telegram/context.py` - `RequestContext`
+
+Поля:
+- `internal_source: Optional[str]` - 'quiz' или None
+- `is_new_user: bool` - устанавливается при создании пользователя
+
+**3. Установка флагов**
+
+См. `src/telegram/dispatcher.py`:
+- При создании пользователя устанавливается `context.is_new_user = True`
+- При обработке `/start` устанавливается `context.internal_source`
+- Подарочный код активируется, но сообщение не отправляется сразу
+
+**4. Добавление системных сообщений**
+
+См. `src/telegram/chat_logic.py` - функция `start_new_chat_tg()`
+
+Логика:
+- Получаем сообщения от персонажа
+- Добавляем системные сообщения ПЕРЕД сообщениями персонажа
+- Выбор сообщения зависит от `is_new_user` и `internal_source`
+
+### Ключи локализации
+
+См. `src/telegram/locales/*/LC_MESSAGES/messages.po`
+
+Ключи:
+- `"Welcome! 👋\nChoose your first story..."` - обычное приветствие для новых пользователей
+- `"quiz_onboarding_message"` - приветствие для новых пользователей из квиза
+- `"quiz_match_message"` - сообщение о match для существующих пользователей
+
+### Разделение mkt_source и internal_source
+
+**ВАЖНО**: Не путайте два типа источников:
+
+- **`mkt_source`** (маркетинговый источник):
+  - Используется для отслеживания рекламных кампаний
+  - Передается через параметр `u` в команде `/start`
+  - Отправляется в аналитику (Sentry, метрики)
+  - Пример: `ref1`, `ref2`, `tiktok_campaign`
+
+- **`internal_source`** (внутренний источник):
+  - Используется для определения точки входа внутри приложения
+  - Передается через параметр `src` в команде `/start`
+  - Влияет на логику приветственных сообщений
+  - Пример: `quiz`, `profile`, `recommendations`
+
+Формат команды с обоими источниками:
+`/start _chat_24_story_uuid..._u_ref1_src_quiz_lang_ru`
+где `u` - mkt_source, `src` - internal_source
+
+### Best Practices
+
+1. **Не изменяйте сообщения персонажа**: Только добавляйте системные сообщения
+2. **Используйте message_type=None**: Для системных сообщений
+3. **Проверяйте is_new_user**: Для различения новых и существующих пользователей
+4. **Передавайте context**: Везде, где нужен доступ к internal_source
+5. **Локализуйте системные сообщения**: Используйте gettext для всех текстов
+6. **Не дублируйте информацию о токенах**: Она уже есть в приветственных сообщениях
+
+## 16. Performance Monitoring
+
+Используйте `context.record_timing()` для измерения критичных операций.
+
+См. `src/telegram/context.py` - метод `record_timing()`
+
+with context.record_timing("llm_api_create_chat"):
+    response = await LLMServiceAPI(...).post(...)
+
+with context.record_timing("translate_message"):
+    res = await context.translator.translate(req)
+
+# В конце dispatcher.py автоматически логируется:
+# [request_id] Performance metrics: Total 1234.56ms; Breakdown: db_get_user=12.34ms; llm_api_create_chat=987.65ms; ...
+```
+
+## 17. Локализация (i18n)
+
+### Файлы переводов:
+
+- `src/telegram/locales/en/LC_MESSAGES/messages.po`
+- `src/telegram/locales/ru/LC_MESSAGES/messages.po`
+
+### Использование gettext:
+
+См. `src/telegram/lib/i18n.py` - функция `get_gettext_for_language()`
+
+Использование:
+- Получите функцию перевода: `_ = get_gettext_for_language(lang_code)`
+- Простой перевод: `message = _("Available commands:")`
+- С параметрами: `message = _("Unknown command: {text}").format(text=text)`
+
+### Обновление переводов:
+
+1. Добавьте новые строки в код с оберткой `_(...)`
+2. Сгенерируйте .pot файл: `pybabel extract ...`
+3. Обновите .po файлы: `pybabel update ...`
+4. Переведите строки в .po файлах
+5. Скомпилируйте: `pybabel compile ...`
+
+## 18. Тестирование и отладка
+
+### Локальная разработка с ngrok:
+
+```bash
+# Установить webhook на ngrok URL
+./src/telegram/install-ngrok-webhook
+
+# Для mono-бота
+./src/telegram/install-ngrok-webhook-mono
+```
+
+### Логирование:
+
+- **Основные события**: `logger.info()`
+- **Проблемы**: `logger.warning()`
+- **Ошибки**: `logger.error(..., exc_info=True)`
+- **Debug**: `logger.debug()` (включается через logging level)
+
+### Mock WebApp:
+
+Используйте `src/telegram/mock_web_app.html` для тестирования WebApp integration.
+
+## 19. Best Practices
+
+### Общие принципы:
+1. **Всегда передавайте RequestContext**: Через все функции обработки запроса
+2. **English-Only DB Policy**: Сохраняйте только английский в БД
+3. **Переводите для отображения**: Используйте translator только перед отправкой пользователю
+4. **Измеряйте производительность**: Добавляйте `record_timing()` для новых операций
+5. **Обрабатывайте ошибки**: Используйте try/except с Sentry и fallback
+6. **Async everywhere**: Все IO должно быть асинхронным
+7. **Быстрый webhook response**: Используйте background tasks
+8. **Логируйте с request_id**: Для трассировки запросов
+9. **Коммитьте в конце**: `session.commit()` только после успешной обработки
+10. **Rollback при ошибках**: `session.rollback()` в except блоке
+11. **Не выходите за пределы папки telegram**: Все изменения должны быть в `src/telegram/`. Не модифицируйте код в других папках (например, `src/db/lib/`, `src/routers/` и т.д.)
+
+### Команды:
+11. **Модульность**: Каждая команда в отдельном файле
+12. **Централизованный роутинг**: Все команды через `route_command()`
+13. **Возвращайте bool**: `True` если команда обработана, `False` если нет
+14. **Не дублируйте логику**: Переиспользуйте функции из других модулей
+
+### Voice Processing:
+15. **Единый путь обработки**: Voice = Text после препроцессора
+16. **Ранние проверки биллинга**: Проверяйте баланс до дорогих операций
+17. **Graceful degradation**: Всегда имейте текстовый fallback
+18. **Context Flags**: Используйте `is_voice_message` и `can_afford_tts`
+19. **Отдельные транзакции**: STT и TTS списываются независимо
+20. **Прозрачность**: Voice не должен влиять на основную бизнес-логику
+
+## 20. Частые ошибки и их решения
+
+### Ошибка: "Translation not working"
+
+**Причина**: Context не передается в функцию или translator не инициализирован.
+
+**Решение**: 
+```python
+# Плохо
+async def some_function(user_id: UUID):
+    # Нет доступа к translator
+
+# Хорошо
+async def some_function(user_id: UUID, context: RequestContext):
+    if context.translator and context.user_language != "en":
+        # Можно переводить
+```
+
+### Ошибка: "DetachedInstanceError" в SQLAlchemy
+
+**Причина**: Попытка доступа к атрибутам объекта после закрытия сессии.
+
+**Решение**: Извлекайте все нужные данные ДО выхода из сессии или commit.
+
+### Ошибка: "No token for MONO_CHAR_ID"
+
+**Причина**: Не установлена переменная окружения для токена моно-бота.
+
+**Решение**: Установите `PERSON_BOT_TOKEN_{char_id}` в переменных окружения.
+
+### Ошибка: "User language keeps resetting"
+
+**Причина**: Пользователь не установил override через `/lang`.
+
+**Решение**: Объясните пользователю использовать команду `/lang` для фиксации языка.
+
+### Ошибка: "Voice message not converted to text"
+
+**Причина**: STT сервис не реализован или недостаточно токенов.
+
+**Решение**: 
+```python
+# Проверьте, что препроцессор вызывается ПЕРВЫМ в dispatcher.py
+data = await preprocess_voice_to_text(data, token, user, sender_chat_id, session, context)
+if data is None:  # Обработка прервана из-за нехватки токенов
+    return
+
+# Убедитесь, что STT сервис реализован
+# src/telegram/services/speech/stt_service.py должен возвращать текст
+```
+
+### Ошибка: "Voice response not sent even with enough tokens"
+
+**Причина**: `can_afford_tts` не установлен или постпроцессор не вызывается.
+
+**Решение**:
+```python
+# Убедитесь, что препроцессор устанавливает флаг
+context.can_afford_tts = True  # в voice_preprocessor.py
+
+# Убедитесь, что постпроцессор вызывается ПОСЛЕ process_regular_message
+if response_dto and response_dto.messages:
+    for msg in response_dto.messages:
+        if msg.message:
+            await postprocess_text_to_voice(msg.message, sender_chat_id, token, user, context)
+```
+
+## 21. Структура callback_data
+
+Для inline-кнопок используйте следующие форматы:
+
+- `/start char_{char_id}` - начало чата с персонажем
+- `/start char_{char_id}_config_{config_id}` - с конфигом
+- `/start char_{char_id}_archive` - с архивацией старого чата
+- `/lang_{lang_code}` - выбор языка (например: `/lang_ru`, `/lang_en`)
+- `get_tokens` - получение токенов
+
+Обработка: см. `src/telegram/handlers/callbacks.py` - функция `handle_callback_query()`
+
+## 22. Маркетинговая аналитика
+
+### Отправка событий в MKT Collector
+
+Все маркетинговые события отправляются в MKT Collector для анализа поведения пользователей.
+
+**Расположение**: `src/telegram/lib/sender_utils.py`
+
+### Функции для отправки событий
+
+#### send_marketing_event (низкоуровневая)
+- **Назначение**: Низкоуровневая функция с полным контролем над параметрами
+- **Возвращает**: `tuple[bool, str]` - результат отправки
+- **Использование**: Для случаев, когда нужен контроль над retries и обработкой ошибок
+
+#### send_mkt_event_fire_and_forget (рекомендуется)
+- **Назначение**: Fire-and-forget функция для простой отправки событий
+- **Особенности**: 
+  - Обрабатывает все ошибки внутри
+  - Логирует все действия
+  - Никогда не бросает исключения
+  - Не блокирует выполнение основного кода
+- **Использование**: Для большинства случаев отправки аналитики
+
+**Пример использования**:
+```python
+from src.telegram.lib.sender_utils import send_mkt_event_fire_and_forget
+
+# Простая отправка события
+await send_mkt_event_fire_and_forget(user.id, "tg_continue_button")
+
+# С параметрами
+await send_mkt_event_fire_and_forget(user.id, "tg_ad_start", {"source": "tiktok"})
+```
+
+### RequestContext.user_id
+
+**ВАЖНО**: `user_id` устанавливается в `dispatcher.py` после резолва пользователя и доступен через `context.user_id` для всех аналитических событий.
+
+**Использование**:
+```python
+# user_id уже установлен в context после резолва пользователя
+if context.user_id:
+    await send_mkt_event_fire_and_forget(context.user_id, "event_name")
+```
+
+### Best Practices для аналитики
+
+1. **Используйте fire-and-forget**: Для большинства случаев используйте `send_mkt_event_fire_and_forget`
+2. **Не блокируйте основной флоу**: Аналитика не должна влиять на пользовательский опыт
+3. **Логируйте ошибки**: Все ошибки аналитики логируются, но не прерывают обработку
+4. **Используйте context.user_id**: Не передавайте `user_id` отдельно, используйте `context.user_id`
+5. **Единое место отправки**: Для повторяющихся событий (например, показ клавиатуры) используйте единую функцию
+
+## 23. Работа с изображениями
+
+### Отправка изображений:
+
+См. `src/telegram/api_client.py`:
+- `send_tg_chat_action_upload_photo()` - индикация загрузки
+- `download_and_send_image()` - отправка изображения
+
+Параметры:
+- `is_spoiler=True` - для NSFW контента
+- `caption` - подпись к изображению
+
+### Контекстные иллюстрации:
+
+См. `src/telegram/use_cases/get_illustration.py` и `src/telegram/handlers/media.py`
+
+Генерация изображений на основе контекста чата через `handle_photo_request()`.
+
+---
+
+**Последнее обновление**: 2025-01-27
+
+**Версия**: 2.3 (добавлено правило: не выходить за пределы папки telegram)
+
+**Авторы**: Flirtello Development Team
+
+**Связанные документы**: 
+- `frontend/.cursor/rules.md` - Правила для фронтенда
+- `docs/architecture.md` - Общая архитектура проекта
+- `src/telegram/README.md` - Техническая документация Telegram-бота

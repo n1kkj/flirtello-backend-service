@@ -1,0 +1,10 @@
+set -a  # automatically export all variables
+source ./.env
+set +a  # stop automatically exporting
+SNAPSHOT_LOC=./snapshots/"$(date "+%F")"-snapshot-"$(date "+%s")".yaml
+echo $SNAPSHOT_LOC
+pushd directus && \
+ docker compose exec directus npx directus schema snapshot ./snapshots/"$(date "+%F")"-snapshot-"$(date "+%s")".yaml && \
+ popd && \
+ echo $SNAPSHOT_LOC > last-directus-snapshot.txt
+

@@ -1,0 +1,155 @@
+{
+  "dashboard": {
+    "title": "Aiko Lounge - Performance Metrics",
+    "tags": ["aiko-lounge", "performance"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "P95 Response Time by Operation",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "quantile_over_time(0.95, request_operation_duration_ms{env=\"$env\"}[5m]) by (operation)",
+            "legendFormat": "{{operation}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "custom": {
+              "axisLabel": "Duration (ms)"
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "P99 Response Time by Operation",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "quantile_over_time(0.99, request_operation_duration_ms{env=\"$env\"}[5m]) by (operation)",
+            "legendFormat": "{{operation}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Average Response Time by Language",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "avg_over_time(request_operation_duration_ms{env=\"$env\"}[5m]) by (language)",
+            "legendFormat": "{{language}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "LLM Response Time (P95)",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "quantile_over_time(0.95, request_operation_duration_ms{operation=~\"llm.*\", env=\"$env\"}[5m])",
+            "legendFormat": "LLM P95",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms"
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Translation Performance by Language",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "avg_over_time(request_operation_duration_ms{operation=\"translate_user_message\", env=\"$env\"}[5m]) by (language)",
+            "legendFormat": "{{language}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms"
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "env",
+          "type": "query",
+          "label": "Environment",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafanacloud-prom"
+          },
+          "query": "label_values(request_operation_duration_ms, env)",
+          "current": {
+            "text": "prod",
+            "value": "prod"
+          },
+          "refresh": 1,
+          "sort": 1,
+          "includeAll": true,
+          "multi": true,
+          "allValue": null
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

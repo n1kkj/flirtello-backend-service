@@ -1,0 +1,29 @@
+{
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "deno.lint": true,
+  "deno.unstable": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "python.testing.pytestArgs": [
+    "."
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "isort.args": [
+        "--profile",
+        "black"
+    ],
+  "black-formatter.args": [
+        "--line-length=101"
+    ],
+  "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+    },
+}

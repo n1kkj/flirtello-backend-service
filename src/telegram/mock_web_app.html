@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telegram Web App Auth</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <h1>Telegram Web App Auth</h1>
+
+  <p id="status">Initializing...</p>
+  <pre id="debug"></pre>
+
+  <script>  
+    function updateDebug(info) {
+      document.getElementById("debug").innerText = "Debug Info:\n" + JSON.stringify(info, null, 2);
+    }
+
+    function checkTelegramApp() {
+      if (!window.Telegram) {
+        return "window.Telegram is not defined - Script might not be loaded";
+      }
+      if (!window.Telegram.WebApp) {
+        return "window.Telegram.WebApp is not defined - Script might not be initialized";
+      }
+      return "Telegram WebApp is available";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // First check if Telegram WebApp is available
+      const telegramStatus = checkTelegramApp();
+      document.getElementById("status").innerText = telegramStatus;
+
+      // Try to get Telegram WebApp instance
+      const tg = window.Telegram?.WebApp;
+      
+      // Add debug information
+      const debugInfo = {
+        scriptStatus: telegramStatus,
+        platform: tg?.platform || "not available",
+        colorScheme: tg?.colorScheme || "not available",
+        themeParams: tg?.themeParams || {},
+        isExpanded: tg?.isExpanded,
+        viewportHeight: tg?.viewportHeight,
+        viewportStableHeight: tg?.viewportStableHeight,
+        initData: tg?.initData || "not available",
+        initDataUnsafe: tg?.initDataUnsafe || {},
+        version: tg?.version || "not available"
+      };
+      
+      updateDebug(debugInfo);
+
+      if (!tg) {
+        document.getElementById("status").innerText = "Telegram WebApp is not properly initialized!";
+        return;
+      }
+
+      if (!tg.initData) {
+        document.getElementById("status").innerText = "No initData from Telegram WebApp. Make sure you're opening this page from within Telegram!";
+        return;
+      }
+
+      document.getElementById("status").innerText = "Sending auth request...";
+
+      // Use the webapp ngrok URL here
+      fetch("https://3e9f-2a0b-4140-3f76-00-2.ngrok-free.app/auth/telegram/webapp", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ init_data: tg.initData })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("status").innerText = "Authenticated ✅\n" + JSON.stringify(data, null, 2);
+      })
+      .catch(err => {
+        document.getElementById("status").innerText = "Error ❌ " + err;
+        updateDebug({...debugInfo, error: err.toString()});
+      });
+    });
+  </script>
+</body>
+</html>

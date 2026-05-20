@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <script type="text/javascript">
+    (function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
+    r.type="text/javascript";
+    r.integrity="sha384-5fhzC8Xw3m+x5cBag4AMKRdf900vw3AoaLty2vYfcKIX1iEsYRHZF4RLXIsu2o+F"
+    r.crossOrigin="anonymous";r.async=true;
+    r.src="https://cdn.amplitude.com/libs/amplitude-8.21.4-min.gz.js";
+    r.onload=function(){if(!e.amplitude.runQueuedFunctions){console.log(
+    "[Amplitude] Error: could not load SDK")}};var s=t.getElementsByTagName("script"
+    )[0];s.parentNode.insertBefore(r,s);function i(e,t){e.prototype[t]=function(){
+    this._q.push([t].concat(Array.prototype.slice.call(arguments,0)));return this}}
+    var o=function(){this._q=[];return this};var a=["add","append","clearAll",
+    "prepend","set","setOnce","unset","preInsert","postInsert","remove"];for(
+    var c=0;c<a.length;c++){i(o,a[c])}n.Identify=o;var l=function(){this._q=[];
+    return this};var u=["setProductId","setQuantity","setPrice","setRevenueType",
+    "setEventProperties"];for(var p=0;p<u.length;p++){i(l,u[p])}n.Revenue=l;var d=[
+    "init","logEvent","logRevenue","setUserId","setUserProperties","setOptOut",
+    "setVersionName","setDomain","setDeviceId","enableTracking",
+    "setGlobalUserProperties","identify","clearUserProperties","setGroup",
+    "logRevenueV2","regenerateDeviceId","groupIdentify","onInit","onNewSessionStart"
+    ,"logEventWithTimestamp","logEventWithGroups","setSessionId","resetSessionId",
+    "getDeviceId","getUserId","setMinTimeBetweenSessionsMillis",
+    "setEventUploadThreshold","setUseDynamicConfig","setServerZone","setServerUrl",
+    "sendEvents","setLibrary","setTransport"];function v(t){function e(e){t[e
+    ]=function(){t._q.push([e].concat(Array.prototype.slice.call(arguments,0)))}}
+    for(var n=0;n<d.length;n++){e(d[n])}}v(n);n.getInstance=function(e){e=(
+    !e||e.length===0?"$default_instance":e).toLowerCase();if(
+    !Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])}
+    return n._iq[e]};e.amplitude=n})(window,document);
+    
+    amplitude.getInstance().init("{{ AMPLITUDE_KEY }}");
+    function amplirudeOnclick(type, redirectUrl) {
+        amplitude.getInstance().logEvent('Payment method selection', { 'Button Type': type });
+
+        setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, 200);
+    }
+    amplitude.getInstance().logEvent('Payment method view');
+    </script>
+    <!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym("{{ YANDEX_METRIC_KEY }}", "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/{{ YANDEX_METRIC_KEY }}" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+    <div class="page">
+    <div class="preheader">
+        <div class="header">
+            <h1>Payment</h1>
+            <a href="javascript:window.history.back()"> 
+                <?xml version="1.0" encoding="iso-8859-1"?>
+                    <svg fill="#fff" stroke="transparent" height="15px" width="15px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 26.676 26.676" xml:space="preserve">
+                    <g>
+                        <path d="M26.105,21.891c-0.229,0-0.439-0.131-0.529-0.346l0,0c-0.066-0.156-1.716-3.857-7.885-4.59
+                            c-1.285-0.156-2.824-0.236-4.693-0.25v4.613c0,0.213-0.115,0.406-0.304,0.508c-0.188,0.098-0.413,0.084-0.588-0.033L0.254,13.815
+                            C0.094,13.708,0,13.528,0,13.339c0-0.191,0.094-0.365,0.254-0.477l11.857-7.979c0.175-0.121,0.398-0.129,0.588-0.029
+                            c0.19,0.102,0.303,0.295,0.303,0.502v4.293c2.578,0.336,13.674,2.33,13.674,11.674c0,0.271-0.191,0.508-0.459,0.562
+                            C26.18,21.891,26.141,21.891,26.105,21.891z" />
+                        </g>
+                    </svg>
+                Go back
+            </a>
+        </div>
+    </div>
+        <section>
+            <ul class="payments">
+                <li>
+                    <a onclick="amplirudeOnclick('PayPal', '/invoicing/fake-payment-callback?invoice_id={{ invoice_id }}&status=success&payment_method=PayPal')">
+                        <div class="card">PayPal  
+                            <svg width="83" viewBox="0 0 193 53" fill="#F0EFF6" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M23.1878 0H8.15832C7.12972 0 6.25501 0.750314 6.09435 1.7701L0.0157223 40.4651C-0.104927 41.229 0.484162 41.9169 1.25546 41.9169H8.43039C9.45899 41.9169 10.3337 41.1672 10.4944 40.1455L12.1336 29.7085C12.2918 28.6868 13.1683 27.9365 14.1951 27.9365H18.9527C28.8527 27.9365 34.5664 23.1262 36.0591 13.5947C36.7313 9.42405 36.0874 6.14776 34.1422 3.85293C32.0062 1.33314 28.2175 0 23.1878 0ZM24.9208 14.1329C24.099 19.5477 19.9785 19.5477 15.9946 19.5477H13.7263L15.3175 9.43514C15.4123 8.82388 15.9392 8.37394 16.5548 8.37394H17.5944C20.3084 8.37394 22.8685 8.37394 24.1914 9.9271C24.9805 10.8536 25.2218 12.2306 24.9208 14.1329Z" fill="#28356A"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M68.4971 13.6659H61.3C60.6869 13.6659 60.1569 14.1159 60.0627 14.7271L59.7438 16.7482L59.2409 16.0158C57.683 13.7451 54.2081 12.9861 50.7407 12.9861C42.7871 12.9861 35.9944 19.0343 34.6716 27.5183C33.984 31.7501 34.9615 35.7971 37.3529 38.6192C39.5462 41.2137 42.6843 42.2953 46.4176 42.2953C52.8262 42.2953 56.3792 38.1581 56.3792 38.1581L56.0585 40.1661C55.9378 40.9338 56.5269 41.6223 57.2939 41.6223H63.7764C64.8074 41.6223 65.6778 40.872 65.8403 39.8503L69.73 15.1177C69.8531 14.3563 69.2659 13.6659 68.4971 13.6659ZM58.4647 27.7304C57.7703 31.8583 54.5073 34.6297 50.3449 34.6297C48.255 34.6297 46.585 33.9566 45.5121 32.6816C44.4484 31.4152 44.0446 29.6123 44.3826 27.6043C45.0314 23.5115 48.3492 20.6493 52.4482 20.6493C54.4919 20.6493 56.1533 21.3317 57.2477 22.6172C58.344 23.917 58.7792 25.731 58.4647 27.7304Z" fill="#28356A"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M106.274 14.285H99.0411C98.3511 14.285 97.7029 14.6293 97.312 15.2053L87.3369 29.9576L83.1087 15.7807C82.8427 14.8938 82.0277 14.285 81.1044 14.285H73.9978C73.1336 14.285 72.534 15.1324 72.8085 15.9488L80.7751 39.4212L73.2856 50.0368C72.6965 50.873 73.2899 52.0226 74.3074 52.0226H81.531C82.2167 52.0226 82.8581 51.687 83.2472 51.1227L107.302 16.2597C107.878 15.426 107.287 14.285 106.274 14.285Z" fill="#28356A"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M130.385 0H115.354C114.327 0 113.453 0.750314 113.292 1.7701L107.213 40.4651C107.093 41.229 107.682 41.9169 108.449 41.9169H116.162C116.878 41.9169 117.491 41.3921 117.603 40.677L119.329 29.7085C119.487 28.6868 120.364 27.9365 121.39 27.9365H126.146C136.048 27.9365 141.76 23.1262 143.254 13.5947C143.929 9.42405 143.281 6.14776 141.336 3.85293C139.201 1.33314 135.415 0 130.385 0ZM132.119 14.1329C131.299 19.5477 127.179 19.5477 123.192 19.5477H120.927L122.52 9.43514C122.614 8.82388 123.137 8.37394 123.755 8.37394H124.795C127.506 8.37394 130.069 8.37394 131.391 9.9271C132.181 10.8536 132.42 12.2306 132.119 14.1329Z" fill="#298FC2"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M175.684 13.6659H168.491C167.874 13.6659 167.349 14.1159 167.257 14.7271L166.938 16.7482L166.432 16.0158C164.874 13.7451 161.402 12.9861 157.934 12.9861C149.981 12.9861 143.191 19.0343 141.868 27.5183C141.182 31.7501 142.155 35.7971 144.546 38.6192C146.744 41.2137 149.878 42.2953 153.612 42.2953C160.02 42.2953 163.573 38.1581 163.573 38.1581L163.252 40.1661C163.132 40.9338 163.72 41.6223 164.492 41.6223H170.973C171.999 41.6223 172.874 40.872 173.034 39.8503L176.926 15.1177C177.045 14.3563 176.456 13.6659 175.684 13.6659ZM165.652 27.7304C164.962 31.8583 161.694 34.6297 157.532 34.6297C155.446 34.6297 153.772 33.9566 152.699 32.6816C151.636 31.4152 151.236 29.6123 151.569 27.6043C152.223 23.5115 155.536 20.6493 159.635 20.6493C161.679 20.6493 163.34 21.3317 164.435 22.6172C165.535 23.917 165.97 25.731 165.652 27.7304Z" fill="#298FC2"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M183.57 1.06367L177.401 40.4669C177.281 41.2308 177.869 41.9187 178.636 41.9187H184.838C185.869 41.9187 186.743 41.169 186.901 40.1474L192.984 1.45427C193.105 0.690363 192.516 0 191.749 0H184.805C184.192 0.00185415 183.665 0.452414 183.57 1.06367Z" fill="#298FC2"/>
+                            </svg>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a  onclick="amplirudeOnclick('Visa / Mastercard', '/invoicing/fake-payment-callback?invoice_id={{ invoice_id }}&status=success&payment_method=Visa / Mastercard')">
+                        <div class="card">Visa / Mastercard
+                            <div>
+                                <svg width="53" viewBox="0 0 193 64" fill="#F0EFF6" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M48.252 62.9136H31.5491L19.0239 13.724C18.4294 11.4613 17.1671 9.46089 15.3103 8.51809C10.6765 6.14879 5.57036 4.26318 0 3.31218V1.41838H26.9071C30.6207 1.41838 33.4059 4.26318 33.8701 7.56709L40.3688 43.0492L57.0636 1.41838H73.3024L48.252 62.9136ZM82.5864 62.9136H66.8118L79.8012 1.41838H95.5757L82.5864 62.9136ZM115.984 18.4543C116.448 15.1422 119.233 13.2484 122.483 13.2484C127.589 12.7729 133.151 13.7239 137.793 16.085L140.578 2.8448C135.936 0.950999 130.83 0 126.196 0C110.886 0 99.7453 8.518 99.7453 20.3399C99.7453 29.3334 107.637 34.0556 113.207 36.9004C119.233 39.737 121.554 41.6308 121.09 44.4674C121.09 48.7223 116.448 50.6161 111.814 50.6161C106.244 50.6161 100.674 49.1978 95.5757 46.8285L92.7905 60.0769C98.3609 62.438 104.387 63.389 109.958 63.389C127.125 63.8563 137.793 55.3465 137.793 42.5736C137.793 26.4886 115.984 25.5458 115.984 18.4543ZM193 62.9136L180.475 1.41838H167.021C164.236 1.41838 161.451 3.31218 160.523 6.14879L137.329 62.9136H153.568L156.809 53.9283H176.761L178.618 62.9136H193ZM169.342 17.9791L173.976 41.1556H160.987L169.342 17.9791Z" fill="#172B85"/>
+                                </svg>
+                                <svg width="53" viewBox="0 0 151 117" fill="#F0EFF6" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M42.655 103.715V109.868V116.022H39.9611V114.528C39.1066 115.636 37.8101 116.332 36.0478 116.332C32.5736 116.332 29.8499 113.629 29.8499 109.868C29.8499 106.111 32.5736 103.405 36.0478 103.405C37.8101 103.405 39.1066 104.101 39.9611 105.209V103.715H42.655ZM36.383 105.928C34.051 105.928 32.6239 107.705 32.6239 109.868C32.6239 112.032 34.051 113.809 36.383 113.809C38.6111 113.809 40.1153 112.108 40.1153 109.868C40.1153 107.629 38.6111 105.928 36.383 105.928ZM133.691 109.868C133.691 107.705 135.118 105.928 137.45 105.928C139.681 105.928 141.183 107.629 141.183 109.868C141.183 112.108 139.681 113.809 137.45 113.809C135.118 113.809 133.691 112.032 133.691 109.868ZM143.725 98.7721V109.868V116.022H141.028V114.528C140.174 115.636 138.877 116.332 137.115 116.332C133.641 116.332 130.917 113.629 130.917 109.868C130.917 106.111 133.641 103.405 137.115 103.405C138.877 103.405 140.174 104.101 141.028 105.209V98.7721H143.725ZM76.0949 105.801C77.8305 105.801 78.9461 106.883 79.2309 108.787H72.8017C73.0894 107.01 74.1753 105.801 76.0949 105.801ZM69.9771 109.868C69.9771 106.031 72.5168 103.405 76.1483 103.405C79.6195 103.405 82.0049 106.031 82.0316 109.868C82.0316 110.228 82.0049 110.564 81.9782 110.897H72.7779C73.1665 113.113 74.7479 113.912 76.4835 113.912C77.7267 113.912 79.0499 113.446 80.0883 112.624L81.4086 114.608C79.9044 115.869 78.1954 116.332 76.3292 116.332C72.6206 116.332 69.9771 113.782 69.9771 109.868ZM108.677 109.868C108.677 107.705 110.104 105.928 112.436 105.928C114.665 105.928 116.169 107.629 116.169 109.868C116.169 112.108 114.665 113.809 112.436 113.809C110.104 113.809 108.677 112.032 108.677 109.868ZM118.708 103.715V109.868V116.022H116.015V114.528C115.157 115.636 113.864 116.332 112.101 116.332C108.627 116.332 105.903 113.629 105.903 109.868C105.903 106.111 108.627 103.405 112.101 103.405C113.864 103.405 115.157 104.101 116.015 105.209V103.715H118.708ZM93.4629 109.868C93.4629 113.603 96.0797 116.332 100.073 116.332C101.939 116.332 103.182 115.919 104.529 114.864L103.236 112.701C102.224 113.423 101.162 113.809 99.993 113.809C97.842 113.782 96.2607 112.238 96.2607 109.868C96.2607 107.499 97.842 105.955 99.993 105.928C101.162 105.928 102.224 106.314 103.236 107.036L104.529 104.873C103.182 103.818 101.939 103.405 100.073 103.405C96.0797 103.405 93.4629 106.134 93.4629 109.868ZM124.93 105.209C125.63 104.127 126.641 103.405 128.196 103.405C128.742 103.405 129.519 103.508 130.116 103.741L129.285 106.264C128.715 106.031 128.146 105.955 127.6 105.955C125.837 105.955 124.956 107.086 124.956 109.123V116.022H122.259V103.715H124.93V105.209ZM55.9791 104.693C54.6826 103.844 52.8965 103.405 50.9265 103.405C47.7876 103.405 45.7671 104.899 45.7671 107.346C45.7671 109.353 47.2713 110.591 50.0424 110.977L51.3152 111.156C52.7927 111.363 53.4899 111.749 53.4899 112.444C53.4899 113.396 52.5049 113.939 50.6654 113.939C48.7993 113.939 47.4523 113.346 46.5444 112.651L45.2746 114.734C46.7521 115.816 48.6183 116.332 50.6387 116.332C54.2168 116.332 56.2907 114.658 56.2907 112.315C56.2907 110.151 54.6589 109.02 51.962 108.634L50.6922 108.451C49.5262 108.298 48.5916 108.068 48.5916 107.242C48.5916 106.341 49.4728 105.801 50.9503 105.801C52.5316 105.801 54.0625 106.394 54.8132 106.856L55.9791 104.693ZM87.4759 105.209C88.1731 104.127 89.1848 103.405 90.7395 103.405C91.2854 103.405 92.0627 103.508 92.6591 103.741L91.8283 106.264C91.2587 106.031 90.689 105.955 90.1431 105.955C88.3808 105.955 87.4996 107.086 87.4996 109.123V116.022H84.8057V103.715H87.4759V105.209ZM67.7485 103.715H63.3427V99.9805H60.6191V103.715H58.1061V106.161H60.6191V111.775C60.6191 114.631 61.7347 116.332 64.9211 116.332C66.09 116.332 67.437 115.972 68.2915 115.38L67.5142 113.087C66.7101 113.55 65.829 113.782 65.1288 113.782C63.7818 113.782 63.3427 112.957 63.3427 111.722V106.161H67.7485V103.715ZM27.4673 108.298V116.022H24.7437V109.173C24.7437 107.086 23.8626 105.928 22.0231 105.928C20.2341 105.928 18.9909 107.063 18.9909 109.199V116.022H16.2673V109.173C16.2673 107.086 15.3624 105.928 13.5734 105.928C11.731 105.928 10.5383 107.063 10.5383 109.199V116.022H7.81763L7.81763 103.715H10.5145V105.232C11.5262 103.791 12.8198 103.405 14.143 103.405C16.0359 103.405 17.3829 104.23 18.2373 105.595C19.3796 103.868 21.0114 103.379 22.5927 103.405C25.6012 103.432 27.4673 105.389 27.4673 108.298Z" fill="#231F20"/>
+                                    <path d="M95.9164 82.8014H55.0861V9.91016H95.9164V82.8014Z" fill="#FF5F00"/>
+                                    <path d="M57.6764 46.3572C57.6764 31.5709 64.6456 18.3996 75.4985 9.91158C67.562 3.70468 57.5458 0 46.6603 0C20.8899 0 0 20.7545 0 46.3572C0 71.9599 20.8899 92.7144 46.6603 92.7144C57.5458 92.7144 67.562 89.0097 75.4985 82.8028C64.6456 74.3147 57.6764 61.1435 57.6764 46.3572Z" fill="#EB001B"/>
+                                    <path d="M151 46.3572C151 71.9599 130.11 92.7144 104.34 92.7144C93.4542 92.7144 83.4379 89.0097 75.4985 82.8028C86.3544 74.3147 93.3236 61.1435 93.3236 46.3572C93.3236 31.5709 86.3544 18.3996 75.4985 9.91158C83.4379 3.70468 93.4542 0 104.34 0C130.11 0 151 20.7545 151 46.3572Z" fill="#F79E1B"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a  onclick="amplirudeOnclick('Crypto', '/invoicing/fake-payment-callback?invoice_id={{ invoice_id }}&status=success&payment_method=Crypto')">
+                        <div class="card">
+                            Crypto
+                            <svg id="Layer_1" width="33" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 51.7 51.7"><path d="M317.78,373.93a25.84,25.84,0,1,1-34.86,11,25.85,25.85,0,0,1,34.86-11h0Z" transform="translate(-280 -371)" style="fill: rgb(255, 153, 51); fill-rule: evenodd;"></path><path d="M315.86,406a13.68,13.68,0,0,1-7.7,4.2l-1.2,5.41-3.5-.78,1-4.51a13.63,13.63,0,0,1-3.52-.85l-1,4.57-3.5-.78,1.24-5.61A13.59,13.59,0,0,1,303,383.56l1.24-5.61,3.5,0.78-1,4.57a13.62,13.62,0,0,1,3.55.72l1-4.51,3.5,0.78-1.2,5.41a13.54,13.54,0,0,1,3.7,3.86,12.94,12.94,0,0,1,1.51,3.21l-5.63,1.78a8.46,8.46,0,0,0-.84-1.83A7.7,7.7,0,1,0,310,403.35a8.22,8.22,0,0,0,1.54-1.3l4.34,4h0Z" transform="translate(-280 -371)" style="fill: rgb(255, 255, 255);"></path></svg>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a onclick="amplirudeOnclick('Patreon', '/invoicing/fake-payment-callback?invoice_id={{ invoice_id }}&status=success&payment_method=Patreon')">
+                        <div class="card">
+                            Patreon
+                            <?xml version="1.0" encoding="UTF-8"?>
+                            <svg width="33px" viewBox="0 -4.5 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+                            <g>
+                                <path d="M45.1355837,0 L45.1355837,246.35001 L0,246.35001 L0,0 L45.1355837,0 Z M163.657111,0 C214.65668,0 256,41.3433196 256,92.3428889 C256,143.342458 214.65668,184.685778 163.657111,184.685778 C112.657542,184.685778 71.3142222,143.342458 71.3142222,92.3428889 C71.3142222,41.3433196 112.657542,0 163.657111,0 Z" fill="#FF424D">
+
+                                </path>
+                            </g>
+                            </svg>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </div>
+</body>
+<style>
+    *{
+        padding: 0px;
+        margin:0px;
+    }
+    body{
+        
+        background-color: #F5F5FA;
+        font-family: "Roboto", sans-serif;
+        font-weight: 300;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    ul{
+        padding: 0px;
+        margin: 0px;
+    }
+    li {
+        margin: 0px;
+        padding: 0px;
+        background-color: transparent;
+    }
+    .payments a {
+        width: 100%;
+        display: block;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .preheader{
+        background-color: #3FC17B;
+        border-radius: 5px;
+        padding-bottom: 10px;
+        width: 100%;
+        max-width: 500px;
+    }
+    .header a {
+        background-color: transparent;
+        color: white;
+        padding-right: 20px;
+        text-decoration: none;
+    }
+    .header svg {
+        background-color: transparent;
+        color: #fff;
+    }
+    .header h1 {
+        font-weight: 500;
+        font-size: 20px;
+        padding: 0px 20px;
+        background-color: transparent;
+    }
+    .header{
+        background-color: #1B355E;
+        border-radius: 5px;
+        height: 64px;
+        width: 100%;
+        max-width: 500px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .payments{
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        width: 100%;
+        max-width: 500px;
+    }
+    .payments li {
+        background-color: #F0EFF6;
+        height: 64px;
+        width: 100%;
+        color: #42587A;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 10px;
+        transition: all 800ms ease-out;
+        cursor: pointer;
+    }
+    .payments:first-child{
+        margin-top: 10px;
+        animation-duration: 600ms;
+    }
+    .page{
+        margin: auto;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .card{
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: transparent;
+    }
+    .payments li:hover{
+        transform: scale(102%);
+    }
+    section{
+        width: 100%;
+        max-width: 500px;
+    }
+</style>
+</html>

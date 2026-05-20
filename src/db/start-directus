@@ -1,0 +1,6 @@
+#!/bin/bash
+set -x
+set -a  # automatically export all variables
+source .env
+set +a  # stop automatically exporting
+cd directus && docker compose up

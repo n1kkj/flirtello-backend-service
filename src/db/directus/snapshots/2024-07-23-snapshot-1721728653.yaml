@@ -1,0 +1,3832 @@
+version: 1
+directus: 10.13.1
+vendor: postgres
+collections:
+  - collection: content_blogs
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: content_blogs
+      color: null
+      display_template: null
+      group: null
+      hidden: false
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: content_blogs
+  - collection: content_character_filters
+    meta: null
+    schema:
+      name: content_character_filters
+  - collection: content_character_filters_content_characters
+    meta: null
+    schema:
+      name: content_character_filters_content_characters
+  - collection: content_characters
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: status
+      archive_value: archived
+      collapse: open
+      collection: content_characters
+      color: null
+      display_template: '{{name}}'
+      group: null
+      hidden: false
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: sort
+      translations: null
+      unarchive_value: draft
+      versioning: false
+    schema:
+      name: content_characters
+  - collection: content_characters_files
+    meta: null
+    schema:
+      name: content_characters_files
+  - collection: content_contexts
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: status
+      archive_value: archived
+      collapse: open
+      collection: content_contexts
+      color: null
+      display_template: '{{name}}'
+      group: null
+      hidden: false
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: sort
+      translations: null
+      unarchive_value: draft
+      versioning: false
+    schema:
+      name: content_contexts
+  - collection: content_contexts_content_characters
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: content_contexts_content_characters
+      color: null
+      display_template: null
+      group: null
+      hidden: true
+      icon: import_export
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: content_contexts_content_characters
+  - collection: content_faq
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: content_faq
+      color: null
+      display_template: null
+      group: null
+      hidden: false
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: content_faq
+  - collection: content_images
+    meta: null
+    schema:
+      name: content_images
+  - collection: content_images_path
+    meta: null
+    schema:
+      name: content_images_path
+  - collection: content_locations
+    meta: null
+    schema:
+      name: content_locations
+  - collection: content_locations_content_characters
+    meta: null
+    schema:
+      name: content_locations_content_characters
+  - collection: content_review_categories
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: content_review_categories
+      color: null
+      display_template: null
+      group: null
+      hidden: false
+      icon: reviews
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: content_review_categories
+  - collection: content_texts
+    meta: null
+    schema:
+      name: content_texts
+  - collection: content_traits
+    meta: null
+    schema:
+      name: content_traits
+  - collection: content_traits_content_characters
+    meta: null
+    schema:
+      name: content_traits_content_characters
+  - collection: images_user_settings
+    meta: null
+    schema:
+      name: images_user_settings
+  - collection: images_views
+    meta: null
+    schema:
+      name: images_views
+  - collection: llm_stats
+    meta: null
+    schema:
+      name: llm_stats
+  - collection: message_archive
+    meta: null
+    schema:
+      name: message_archive
+  - collection: summaries
+    meta: null
+    schema:
+      name: summaries
+fields:
+  - collection: content_blogs
+    field: id
+    type: bigInteger
+    meta:
+      collection: content_blogs
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: content_blogs
+      data_type: bigint
+      default_value: nextval('content_blogs_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_blogs
+    field: date_created
+    type: timestamp
+    meta:
+      collection: content_blogs
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_created
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 2
+      special:
+        - date-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_created
+      table: content_blogs
+      data_type: timestamp with time zone
+      default_value: now()
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_blogs
+    field: title
+    type: string
+    meta:
+      collection: content_blogs
+      conditions: null
+      display: null
+      display_options: null
+      field: title
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: title
+      table: content_blogs
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_blogs
+    field: images
+    type: json
+    meta:
+      collection: content_blogs
+      conditions: null
+      display: null
+      display_options: null
+      field: images
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: images
+      table: content_blogs
+      data_type: jsonb
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_blogs
+    field: announcement
+    type: text
+    meta:
+      collection: content_blogs
+      conditions: null
+      display: null
+      display_options: null
+      field: announcement
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 6
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: announcement
+      table: content_blogs
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_blogs
+    field: description
+    type: text
+    meta:
+      collection: content_blogs
+      conditions: null
+      display: null
+      display_options: null
+      field: description
+      group: null
+      hidden: false
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: description
+      table: content_blogs
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_character_filters
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_character_filters
+      data_type: integer
+      default_value: nextval('content_character_filters_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_character_filters
+    field: name
+    type: string
+    meta: null
+    schema:
+      name: name
+      table: content_character_filters
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_character_filters_content_characters
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_character_filters_content_characters
+      data_type: integer
+      default_value: nextval('content_character_filters_content_characters_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_character_filters_content_characters
+    field: content_character_filters_id
+    type: integer
+    meta: null
+    schema:
+      name: content_character_filters_id
+      table: content_character_filters_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_character_filters
+      foreign_key_column: id
+  - collection: content_character_filters_content_characters
+    field: content_characters_id
+    type: integer
+    meta: null
+    schema:
+      name: content_characters_id
+      table: content_character_filters_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_characters
+      foreign_key_column: id
+  - collection: content_characters
+    field: id
+    type: integer
+    meta:
+      collection: content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: content_characters
+      data_type: integer
+      default_value: nextval('content_characters_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: status
+    type: string
+    meta:
+      collection: content_characters
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+            foreground: var(--theme--primary)
+            background: var(--theme--primary-background)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+            foreground: var(--theme--foreground)
+            background: var(--theme--background-normal)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+            foreground: var(--theme--warning)
+            background: var(--theme--warning-background)
+        showAsDot: true
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+      readonly: false
+      required: false
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: status
+      table: content_characters
+      data_type: character varying
+      default_value: draft
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: sort
+    type: integer
+    meta:
+      collection: content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: sort
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sort
+      table: content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: user_created
+    type: uuid
+    meta:
+      collection: content_characters
+      conditions: null
+      display: user
+      display_options: null
+      field: user_created
+      group: null
+      hidden: true
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      readonly: true
+      required: false
+      sort: 4
+      special:
+        - user-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: user_created
+      table: content_characters
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_characters
+    field: date_created
+    type: timestamp
+    meta:
+      collection: content_characters
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_created
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 5
+      special:
+        - date-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_created
+      table: content_characters
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: user_updated
+    type: uuid
+    meta:
+      collection: content_characters
+      conditions: null
+      display: user
+      display_options: null
+      field: user_updated
+      group: null
+      hidden: true
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      readonly: true
+      required: false
+      sort: 6
+      special:
+        - user-updated
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: user_updated
+      table: content_characters
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_characters
+    field: date_updated
+    type: timestamp
+    meta:
+      collection: content_characters
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_updated
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 7
+      special:
+        - date-updated
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_updated
+      table: content_characters
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: name
+    type: string
+    meta:
+      collection: content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: name
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 8
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: name
+      table: content_characters
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: usable_contexts
+    type: alias
+    meta:
+      collection: content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: usable_contexts
+      group: null
+      hidden: false
+      interface: list-m2m
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 9
+      special:
+        - m2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: content_characters
+    field: personality
+    type: text
+    meta: null
+    schema:
+      name: personality
+      table: content_characters
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: main_photo
+    type: uuid
+    meta: null
+    schema:
+      name: main_photo
+      table: content_characters
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: content_characters
+    field: public_description
+    type: text
+    meta: null
+    schema:
+      name: public_description
+      table: content_characters
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: message_addendum_override
+    type: text
+    meta: null
+    schema:
+      name: message_addendum_override
+      table: content_characters
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: system_prompt_override
+    type: text
+    meta: null
+    schema:
+      name: system_prompt_override
+      table: content_characters
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: use_message_addendum_override
+    type: boolean
+    meta: null
+    schema:
+      name: use_message_addendum_override
+      table: content_characters
+      data_type: boolean
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters
+    field: use_system_prompt_override
+    type: boolean
+    meta: null
+    schema:
+      name: use_system_prompt_override
+      table: content_characters
+      data_type: boolean
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters_files
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_characters_files
+      data_type: integer
+      default_value: nextval('content_characters_files_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_characters_files
+    field: content_characters_id
+    type: integer
+    meta: null
+    schema:
+      name: content_characters_id
+      table: content_characters_files
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_characters
+      foreign_key_column: id
+  - collection: content_characters_files
+    field: directus_files_id
+    type: uuid
+    meta: null
+    schema:
+      name: directus_files_id
+      table: content_characters_files
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: content_contexts
+    field: id
+    type: integer
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: content_contexts
+      data_type: integer
+      default_value: nextval('content_contexts_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: status
+    type: string
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: labels
+      display_options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+            foreground: var(--theme--primary)
+            background: var(--theme--primary-background)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+            foreground: var(--theme--foreground)
+            background: var(--theme--background-normal)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+            foreground: var(--theme--warning)
+            background: var(--theme--warning-background)
+        showAsDot: true
+      field: status
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: $t:published
+            value: published
+            color: var(--theme--primary)
+          - text: $t:draft
+            value: draft
+            color: var(--theme--foreground)
+          - text: $t:archived
+            value: archived
+            color: var(--theme--warning)
+      readonly: false
+      required: false
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: status
+      table: content_contexts
+      data_type: character varying
+      default_value: draft
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: sort
+    type: integer
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: null
+      display_options: null
+      field: sort
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sort
+      table: content_contexts
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: user_created
+    type: uuid
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: user
+      display_options: null
+      field: user_created
+      group: null
+      hidden: true
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      readonly: true
+      required: false
+      sort: 4
+      special:
+        - user-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: user_created
+      table: content_contexts
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_contexts
+    field: date_created
+    type: timestamp
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_created
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 5
+      special:
+        - date-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_created
+      table: content_contexts
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: user_updated
+    type: uuid
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: user
+      display_options: null
+      field: user_updated
+      group: null
+      hidden: true
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{avatar.$thumbnail}} {{first_name}} {{last_name}}'
+      readonly: true
+      required: false
+      sort: 6
+      special:
+        - user-updated
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: user_updated
+      table: content_contexts
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_contexts
+    field: date_updated
+    type: timestamp
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_updated
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 7
+      special:
+        - date-updated
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_updated
+      table: content_contexts
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: name
+    type: string
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: null
+      display_options: null
+      field: name
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 8
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: name
+      table: content_contexts
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: used_by
+    type: alias
+    meta:
+      collection: content_contexts
+      conditions: null
+      display: null
+      display_options: null
+      field: used_by
+      group: null
+      hidden: false
+      interface: list-m2m
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 9
+      special:
+        - m2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: content_contexts
+    field: first_message
+    type: text
+    meta: null
+    schema:
+      name: first_message
+      table: content_contexts
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: scenario
+    type: text
+    meta: null
+    schema:
+      name: scenario
+      table: content_contexts
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts
+    field: context_type
+    type: string
+    meta: null
+    schema:
+      name: context_type
+      table: content_contexts
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts_content_characters
+    field: id
+    type: integer
+    meta:
+      collection: content_contexts_content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: content_contexts_content_characters
+      data_type: integer
+      default_value: nextval('content_contexts_content_characters_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_contexts_content_characters
+    field: content_contexts_id
+    type: integer
+    meta:
+      collection: content_contexts_content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: content_contexts_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 2
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: content_contexts_id
+      table: content_contexts_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_contexts
+      foreign_key_column: id
+  - collection: content_contexts_content_characters
+    field: content_characters_id
+    type: integer
+    meta:
+      collection: content_contexts_content_characters
+      conditions: null
+      display: null
+      display_options: null
+      field: content_characters_id
+      group: null
+      hidden: true
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: content_characters_id
+      table: content_contexts_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_characters
+      foreign_key_column: id
+  - collection: content_faq
+    field: id
+    type: bigInteger
+    meta:
+      collection: content_faq
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: true
+      interface: input
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 1
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: content_faq
+      data_type: bigint
+      default_value: nextval('content_faq_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_faq
+    field: date_created
+    type: timestamp
+    meta:
+      collection: content_faq
+      conditions: null
+      display: datetime
+      display_options:
+        relative: true
+      field: date_created
+      group: null
+      hidden: true
+      interface: datetime
+      note: null
+      options: null
+      readonly: true
+      required: false
+      sort: 2
+      special:
+        - date-created
+      translations: null
+      validation: null
+      validation_message: null
+      width: half
+    schema:
+      name: date_created
+      table: content_faq
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_faq
+    field: question
+    type: string
+    meta:
+      collection: content_faq
+      conditions: null
+      display: null
+      display_options: null
+      field: question
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 3
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: question
+      table: content_faq
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_faq
+    field: answer
+    type: text
+    meta:
+      collection: content_faq
+      conditions: null
+      display: null
+      display_options: null
+      field: answer
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 4
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: answer
+      table: content_faq
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_faq
+    field: order
+    type: integer
+    meta:
+      collection: content_faq
+      conditions: null
+      display: null
+      display_options: null
+      field: order
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      sort: 5
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: order
+      table: content_faq
+      data_type: numeric
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: id
+    type: uuid
+    meta: null
+    schema:
+      name: id
+      table: content_images
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: hash
+    type: string
+    meta: null
+    schema:
+      name: hash
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: character
+    type: integer
+    meta: null
+    schema:
+      name: character
+      table: content_images
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_characters
+      foreign_key_column: id
+  - collection: content_images
+    field: image
+    type: uuid
+    meta: null
+    schema:
+      name: image
+      table: content_images
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: content_images
+    field: location
+    type: string
+    meta: null
+    schema:
+      name: location
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: cloths
+    type: string
+    meta: null
+    schema:
+      name: cloths
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: rating
+    type: string
+    meta: null
+    schema:
+      name: rating
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: behavior
+    type: string
+    meta: null
+    schema:
+      name: behavior
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: prompt
+    type: text
+    meta: null
+    schema:
+      name: prompt
+      table: content_images
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: name
+    type: string
+    meta: null
+    schema:
+      name: name
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: char_name
+    type: string
+    meta: null
+    schema:
+      name: char_name
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: image_blurred
+    type: uuid
+    meta: null
+    schema:
+      name: image_blurred
+      table: content_images
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: content_images
+    field: attr1
+    type: string
+    meta: null
+    schema:
+      name: attr1
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: attr2
+    type: string
+    meta: null
+    schema:
+      name: attr2
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images
+    field: attr3
+    type: string
+    meta: null
+    schema:
+      name: attr3
+      table: content_images
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images_path
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_images_path
+      data_type: integer
+      default_value: nextval('content_images_path_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images_path
+    field: content_images_id
+    type: uuid
+    meta: null
+    schema:
+      name: content_images_id
+      table: content_images_path
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images_path
+    field: item
+    type: string
+    meta: null
+    schema:
+      name: item
+      table: content_images_path
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_images_path
+    field: collection
+    type: string
+    meta: null
+    schema:
+      name: collection
+      table: content_images_path
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_locations
+      data_type: integer
+      default_value: nextval('content_locations_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: status
+    type: string
+    meta: null
+    schema:
+      name: status
+      table: content_locations
+      data_type: character varying
+      default_value: draft
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: sort
+    type: integer
+    meta: null
+    schema:
+      name: sort
+      table: content_locations
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: user_created
+    type: uuid
+    meta: null
+    schema:
+      name: user_created
+      table: content_locations
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_locations
+    field: date_created
+    type: timestamp
+    meta: null
+    schema:
+      name: date_created
+      table: content_locations
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: user_updated
+    type: uuid
+    meta: null
+    schema:
+      name: user_updated
+      table: content_locations
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_locations
+    field: date_updated
+    type: timestamp
+    meta: null
+    schema:
+      name: date_updated
+      table: content_locations
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: name
+    type: string
+    meta: null
+    schema:
+      name: name
+      table: content_locations
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations
+    field: header_image
+    type: uuid
+    meta: null
+    schema:
+      name: header_image
+      table: content_locations
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_files
+      foreign_key_column: id
+  - collection: content_locations
+    field: description
+    type: text
+    meta: null
+    schema:
+      name: description
+      table: content_locations
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations_content_characters
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_locations_content_characters
+      data_type: integer
+      default_value: nextval('content_locations_content_characters_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_locations_content_characters
+    field: content_locations_id
+    type: integer
+    meta: null
+    schema:
+      name: content_locations_id
+      table: content_locations_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_locations
+      foreign_key_column: id
+  - collection: content_locations_content_characters
+    field: content_characters_id
+    type: integer
+    meta: null
+    schema:
+      name: content_characters_id
+      table: content_locations_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_characters
+      foreign_key_column: id
+  - collection: content_review_categories
+    field: id
+    type: uuid
+    meta: null
+    schema:
+      name: id
+      table: content_review_categories
+      data_type: uuid
+      default_value: gen_random_uuid()
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_review_categories
+    field: review_type
+    type: unknown
+    meta: null
+    schema:
+      name: review_type
+      table: content_review_categories
+      data_type: public.review_types
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_review_categories
+    field: category_name
+    type: text
+    meta: null
+    schema:
+      name: category_name
+      table: content_review_categories
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_texts
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_texts
+      data_type: integer
+      default_value: nextval('content_texts_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_texts
+    field: slug
+    type: text
+    meta: null
+    schema:
+      name: slug
+      table: content_texts
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_texts
+    field: text
+    type: text
+    meta: null
+    schema:
+      name: text
+      table: content_texts
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_texts
+    field: header
+    type: string
+    meta: null
+    schema:
+      name: header
+      table: content_texts
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_traits
+      data_type: integer
+      default_value: nextval('content_traits_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits
+    field: status
+    type: string
+    meta: null
+    schema:
+      name: status
+      table: content_traits
+      data_type: character varying
+      default_value: draft
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits
+    field: sort
+    type: integer
+    meta: null
+    schema:
+      name: sort
+      table: content_traits
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits
+    field: user_created
+    type: uuid
+    meta: null
+    schema:
+      name: user_created
+      table: content_traits
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_traits
+    field: date_created
+    type: timestamp
+    meta: null
+    schema:
+      name: date_created
+      table: content_traits
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits
+    field: user_updated
+    type: uuid
+    meta: null
+    schema:
+      name: user_updated
+      table: content_traits
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: directus_users
+      foreign_key_column: id
+  - collection: content_traits
+    field: date_updated
+    type: timestamp
+    meta: null
+    schema:
+      name: date_updated
+      table: content_traits
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits
+    field: name
+    type: string
+    meta: null
+    schema:
+      name: name
+      table: content_traits
+      data_type: character varying
+      default_value: null
+      max_length: 255
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits_content_characters
+    field: id
+    type: integer
+    meta: null
+    schema:
+      name: id
+      table: content_traits_content_characters
+      data_type: integer
+      default_value: nextval('content_traits_content_characters_id_seq'::regclass)
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: content_traits_content_characters
+    field: content_traits_id
+    type: integer
+    meta: null
+    schema:
+      name: content_traits_id
+      table: content_traits_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_traits
+      foreign_key_column: id
+  - collection: content_traits_content_characters
+    field: content_characters_id
+    type: integer
+    meta: null
+    schema:
+      name: content_characters_id
+      table: content_traits_content_characters
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: content_characters
+      foreign_key_column: id
+  - collection: images_user_settings
+    field: id
+    type: uuid
+    meta: null
+    schema:
+      name: id
+      table: images_user_settings
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: images_user_settings
+    field: settings
+    type: unknown
+    meta: null
+    schema:
+      name: settings
+      table: images_user_settings
+      data_type: extensions.hstore
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: images_views
+    field: id
+    type: uuid
+    meta: null
+    schema:
+      name: id
+      table: images_views
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: images_views
+    field: image_id
+    type: uuid
+    meta: null
+    schema:
+      name: image_id
+      table: images_views
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: images_views
+    field: user_id
+    type: uuid
+    meta: null
+    schema:
+      name: user_id
+      table: images_views
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: id
+    type: bigInteger
+    meta: null
+    schema:
+      name: id
+      table: llm_stats
+      data_type: bigint
+      default_value: null
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: created_at
+    type: timestamp
+    meta: null
+    schema:
+      name: created_at
+      table: llm_stats
+      data_type: timestamp with time zone
+      default_value: now()
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: model_id
+    type: string
+    meta: null
+    schema:
+      name: model_id
+      table: llm_stats
+      data_type: character varying
+      default_value: null
+      max_length: -5
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: model_latency
+    type: integer
+    meta: null
+    schema:
+      name: model_latency
+      table: llm_stats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: input_tokens
+    type: integer
+    meta: null
+    schema:
+      name: input_tokens
+      table: llm_stats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: output_tokens
+    type: integer
+    meta: null
+    schema:
+      name: output_tokens
+      table: llm_stats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: ref_id
+    type: integer
+    meta: null
+    schema:
+      name: ref_id
+      table: llm_stats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: ref_type
+    type: text
+    meta: null
+    schema:
+      name: ref_type
+      table: llm_stats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: user_id
+    type: uuid
+    meta: null
+    schema:
+      name: user_id
+      table: llm_stats
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: chat_history
+    type: json
+    meta: null
+    schema:
+      name: chat_history
+      table: llm_stats
+      data_type: jsonb
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: prompt
+    type: text
+    meta: null
+    schema:
+      name: prompt
+      table: llm_stats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: response
+    type: text
+    meta: null
+    schema:
+      name: response
+      table: llm_stats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: llm_stats
+    field: system_prompt
+    type: text
+    meta: null
+    schema:
+      name: system_prompt
+      table: llm_stats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: id
+    type: bigInteger
+    meta: null
+    schema:
+      name: id
+      table: message_archive
+      data_type: bigint
+      default_value: null
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: inserted_at
+    type: timestamp
+    meta: null
+    schema:
+      name: inserted_at
+      table: message_archive
+      data_type: timestamp with time zone
+      default_value: now()
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: text
+    type: text
+    meta: null
+    schema:
+      name: text
+      table: message_archive
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: attachments
+    type: json
+    meta: null
+    schema:
+      name: attachments
+      table: message_archive
+      data_type: jsonb
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: user_id
+    type: uuid
+    meta: null
+    schema:
+      name: user_id
+      table: message_archive
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: char_id
+    type: integer
+    meta: null
+    schema:
+      name: char_id
+      table: message_archive
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: channel_id
+    type: bigInteger
+    meta: null
+    schema:
+      name: channel_id
+      table: message_archive
+      data_type: bigint
+      default_value: null
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: archive_id
+    type: uuid
+    meta: null
+    schema:
+      name: archive_id
+      table: message_archive
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: message_archive
+    field: archive_time
+    type: timestamp
+    meta: null
+    schema:
+      name: archive_time
+      table: message_archive
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: summaries
+    field: id
+    type: bigInteger
+    meta: null
+    schema:
+      name: id
+      table: summaries
+      data_type: bigint
+      default_value: null
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: true
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: true
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: summaries
+    field: created_at
+    type: timestamp
+    meta: null
+    schema:
+      name: created_at
+      table: summaries
+      data_type: timestamp with time zone
+      default_value: now()
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: summaries
+    field: channel_id
+    type: bigInteger
+    meta: null
+    schema:
+      name: channel_id
+      table: summaries
+      data_type: bigint
+      default_value: null
+      max_length: null
+      numeric_precision: 64
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: channels
+      foreign_key_column: id
+  - collection: summaries
+    field: summary
+    type: text
+    meta: null
+    schema:
+      name: summary
+      table: summaries
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: summaries
+    field: message_date_from
+    type: timestamp
+    meta: null
+    schema:
+      name: message_date_from
+      table: summaries
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: summaries
+    field: message_date_to
+    type: timestamp
+    meta: null
+    schema:
+      name: message_date_to
+      table: summaries
+      data_type: timestamp with time zone
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+relations:
+  - collection: content_character_filters_content_characters
+    field: content_character_filters_id
+    related_collection: content_character_filters
+    meta: null
+    schema:
+      table: content_character_filters_content_characters
+      column: content_character_filters_id
+      foreign_key_table: content_character_filters
+      foreign_key_column: id
+      constraint_name: content_character_filters_content_characte__19a18a9f_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_character_filters_content_characters
+    field: content_characters_id
+    related_collection: content_characters
+    meta: null
+    schema:
+      table: content_character_filters_content_characters
+      column: content_characters_id
+      foreign_key_table: content_characters
+      foreign_key_column: id
+      constraint_name: content_character_filters_content_character__c7acaf0_foreign
+      on_update: CASCADE
+      on_delete: NO ACTION
+  - collection: content_characters
+    field: user_created
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: content_characters
+      many_field: user_created
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: content_characters
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_characters_user_created_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_characters
+    field: user_updated
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: content_characters
+      many_field: user_updated
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: content_characters
+      column: user_updated
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_characters_user_updated_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_characters
+    field: main_photo
+    related_collection: directus_files
+    meta: null
+    schema:
+      table: content_characters
+      column: main_photo
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: content_characters_main_photo_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_characters_files
+    field: directus_files_id
+    related_collection: directus_files
+    meta: null
+    schema:
+      table: content_characters_files
+      column: directus_files_id
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: content_characters_files_directus_files_id_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_characters_files
+    field: content_characters_id
+    related_collection: content_characters
+    meta: null
+    schema:
+      table: content_characters_files
+      column: content_characters_id
+      foreign_key_table: content_characters
+      foreign_key_column: id
+      constraint_name: content_characters_files_content_characters_id_foreign
+      on_update: CASCADE
+      on_delete: NO ACTION
+  - collection: content_contexts
+    field: user_created
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: content_contexts
+      many_field: user_created
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: content_contexts
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_contexts_user_created_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_contexts
+    field: user_updated
+    related_collection: directus_users
+    meta:
+      junction_field: null
+      many_collection: content_contexts
+      many_field: user_updated
+      one_allowed_collections: null
+      one_collection: directus_users
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: content_contexts
+      column: user_updated
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_contexts_user_updated_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_contexts_content_characters
+    field: content_characters_id
+    related_collection: content_characters
+    meta:
+      junction_field: content_contexts_id
+      many_collection: content_contexts_content_characters
+      many_field: content_characters_id
+      one_allowed_collections: null
+      one_collection: content_characters
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: usable_contexts
+      sort_field: null
+    schema:
+      table: content_contexts_content_characters
+      column: content_characters_id
+      foreign_key_table: content_characters
+      foreign_key_column: id
+      constraint_name: content_contexts_content_characters_conten__4d6f7745_foreign
+      on_update: CASCADE
+      on_delete: NO ACTION
+  - collection: content_contexts_content_characters
+    field: content_contexts_id
+    related_collection: content_contexts
+    meta:
+      junction_field: content_characters_id
+      many_collection: content_contexts_content_characters
+      many_field: content_contexts_id
+      one_allowed_collections: null
+      one_collection: content_contexts
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: used_by
+      sort_field: null
+    schema:
+      table: content_contexts_content_characters
+      column: content_contexts_id
+      foreign_key_table: content_contexts
+      foreign_key_column: id
+      constraint_name: content_contexts_content_characters_conten__36eb00cb_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_images
+    field: image
+    related_collection: directus_files
+    meta: null
+    schema:
+      table: content_images
+      column: image
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: content_images_image_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_images
+    field: image_blurred
+    related_collection: directus_files
+    meta: null
+    schema:
+      table: content_images
+      column: image_blurred
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: content_images_image_blurred_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_images
+    field: character
+    related_collection: content_characters
+    meta: null
+    schema:
+      table: content_images
+      column: character
+      foreign_key_table: content_characters
+      foreign_key_column: id
+      constraint_name: content_images_character_foreign
+      on_update: CASCADE
+      on_delete: NO ACTION
+  - collection: content_locations
+    field: header_image
+    related_collection: directus_files
+    meta: null
+    schema:
+      table: content_locations
+      column: header_image
+      foreign_key_table: directus_files
+      foreign_key_column: id
+      constraint_name: content_locations_header_image_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_locations
+    field: user_created
+    related_collection: directus_users
+    meta: null
+    schema:
+      table: content_locations
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_locations_user_created_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_locations
+    field: user_updated
+    related_collection: directus_users
+    meta: null
+    schema:
+      table: content_locations
+      column: user_updated
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_locations_user_updated_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_locations_content_characters
+    field: content_locations_id
+    related_collection: content_locations
+    meta: null
+    schema:
+      table: content_locations_content_characters
+      column: content_locations_id
+      foreign_key_table: content_locations
+      foreign_key_column: id
+      constraint_name: content_locations_content_characters_conten__3184201_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_locations_content_characters
+    field: content_characters_id
+    related_collection: content_characters
+    meta: null
+    schema:
+      table: content_locations_content_characters
+      column: content_characters_id
+      foreign_key_table: content_characters
+      foreign_key_column: id
+      constraint_name: content_locations_content_characters_conte__5c611469_foreign
+      on_update: CASCADE
+      on_delete: NO ACTION
+  - collection: content_traits
+    field: user_created
+    related_collection: directus_users
+    meta: null
+    schema:
+      table: content_traits
+      column: user_created
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_traits_user_created_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_traits
+    field: user_updated
+    related_collection: directus_users
+    meta: null
+    schema:
+      table: content_traits
+      column: user_updated
+      foreign_key_table: directus_users
+      foreign_key_column: id
+      constraint_name: content_traits_user_updated_foreign
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: content_traits_content_characters
+    field: content_traits_id
+    related_collection: content_traits
+    meta: null
+    schema:
+      table: content_traits_content_characters
+      column: content_traits_id
+      foreign_key_table: content_traits
+      foreign_key_column: id
+      constraint_name: content_traits_content_characters_content_traits_id_foreign
+      on_update: NO ACTION
+      on_delete: SET NULL
+  - collection: content_traits_content_characters
+    field: content_characters_id
+    related_collection: content_characters
+    meta: null
+    schema:
+      table: content_traits_content_characters
+      column: content_characters_id
+      foreign_key_table: content_characters
+      foreign_key_column: id
+      constraint_name: content_traits_content_characters_content___57fde464_foreign
+      on_update: CASCADE
+      on_delete: NO ACTION
+  - collection: summaries
+    field: channel_id
+    related_collection: channels
+    meta: null
+    schema:
+      table: summaries
+      column: channel_id
+      foreign_key_table: channels
+      foreign_key_column: id
+      constraint_name: content_summaries_channel_id_fkey
+      on_update: NO ACTION
+      on_delete: CASCADE

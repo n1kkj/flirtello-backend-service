@@ -1,0 +1,25 @@
+name: "Context Detection Test v2 (improved rules)"
+parse_field: "category" # XML field to parse from response
+models:
+  - "openrouter://meta-llama/llama-3.1-8b-instruct"
+  - "openrouter://sao10k/l3-lunaris-8b"
+  - "openrouter://mistralai/mixtral-8x7b-instruct"
+  - "openrouter://cohere/command-r7b-12-2024"
+  - "openrouter://meta-llama/llama-4-scout"
+  - "openrouter://mistralai/ministral-8b"
+prompts:
+  - "prompts/context_detection_v2.md"
+dialogs:
+  - "test_dialogs/dialog_001_middle.md"
+  - "test_dialogs/dialog_002_end.md"
+  - "test_dialogs/dialog_003_start.md"
+  - "test_dialogs/dialog_004_start.md"
+  - "test_dialogs/dialog_005_middle.md"
+  - "test_dialogs/dialog_006_end.md"
+  - "test_dialogs/dialog_007_end.md"
+  - "test_dialogs/dialog_008_middle.md"
+  - "test_dialogs/dialog_009_start.md"
+  - "test_dialogs/dialog_010_middle.md"
+  - "test_dialogs/dialog_011_start.md"
+  - "test_dialogs/dialog_012_middle.md"
+

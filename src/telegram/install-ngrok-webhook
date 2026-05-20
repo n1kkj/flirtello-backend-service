@@ -1,0 +1,30 @@
+#!/bin/bash
+set -x
+#set -a  # automatically export all variables
+#source src/telegram/.env.telegram
+source src/.env
+#set +a  # stop automatically exporting
+
+# Get current ngrok URL for botwebhook tunnel
+PUBLIC_URL=`curl -s localhost:4040/api/tunnels | jq -r '.tunnels[] | select(.name=="botwebhook") | .public_url'`
+
+if [ -z "$PUBLIC_URL" ] || [ "$PUBLIC_URL" = "null" ]; then
+    echo "Error: Could not get ngrok URL. Make sure ngrok is running with botwebhook tunnel."
+    exit 1
+fi
+
+echo "Using ngrok URL: $PUBLIC_URL"
+
+# First delete existing webhook
+curl -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/deleteWebhook
+
+# Set new webhook with all allowed updates
+curl -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"url\": \"${PUBLIC_URL}/webhook/\",
+    \"allowed_updates\": [\"message\", \"edited_message\", \"channel_post\", \"edited_channel_post\", \"inline_query\", \"chosen_inline_result\", \"callback_query\", \"shipping_query\", \"pre_checkout_query\", \"poll\", \"poll_answer\", \"my_chat_member\", \"chat_member\", \"chat_join_request\"]
+  }"
+
+# Verify webhook info
+curl https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getWebhookInfo

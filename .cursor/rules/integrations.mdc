@@ -1,0 +1,25 @@
+---
+description: integrations and rules for flirtello-backend-service
+globs: 
+alwaysApply: false
+---
+
+# Integrations & Rules
+
+## Sentry Integration
+- Sentry org id: `grls-dev`
+- Используется для мониторинга ошибок и событий
+- `sentry_sdk.capture_exception(e)` - для исключений
+- `sentry_sdk.capture_message(msg, level="warning/error")` - для важных событий
+
+## Telegram Bot
+Подробная документация по разработке Telegram-бота находится в `telegram-bot.mdc`.
+
+Ключевые правила:
+- Всегда передавать `RequestContext` через все функции
+- Сохранять только английский текст в БД
+- Переводить для отображения пользователю
+- Использовать async/await для всех IO операций
+- Быстро отвечать на webhook через background tasks
+
+См. `.cursor/rules/telegram-bot.mdc` для полной документации.

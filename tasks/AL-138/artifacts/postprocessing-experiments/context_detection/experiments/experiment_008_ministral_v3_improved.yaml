@@ -1,0 +1,19 @@
+name: "Context Detection - Ministral-8B v3 (improved)"
+parse_field: "category" # XML field to parse from response
+models:
+  - "openrouter://mistralai/ministral-8b"
+prompts:
+  - "prompts/context_detection_v3.md"
+dialogs:
+  - "test_dialogs/dialog_001_middle.md"
+  - "test_dialogs/dialog_002_end.md"
+  - "test_dialogs/dialog_003_start.md"
+  - "test_dialogs/dialog_004_start.md"
+  - "test_dialogs/dialog_005_middle.md"
+  - "test_dialogs/dialog_006_end.md"
+  - "test_dialogs/dialog_007_end.md"
+  - "test_dialogs/dialog_008_middle.md"
+  - "test_dialogs/dialog_009_start.md"
+  - "test_dialogs/dialog_010_middle.md"
+  - "test_dialogs/dialog_011_start.md"
+  - "test_dialogs/dialog_012_middle.md"

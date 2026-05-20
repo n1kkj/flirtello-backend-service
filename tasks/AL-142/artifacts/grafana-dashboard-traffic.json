@@ -1,0 +1,196 @@
+{
+  "dashboard": {
+    "title": "Aiko Lounge - Traffic & Usage",
+    "tags": ["aiko-lounge", "traffic"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Requests Per Second by Operation",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "rate(request_operation_duration_ms{env=\"$env\"}[5m]) * 60 by (operation)",
+            "legendFormat": "{{operation}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "custom": {
+              "axisLabel": "Requests/sec"
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Total Requests (1h) by Operation",
+        "type": "bargauge",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(count_over_time(request_operation_duration_ms{env=\"$env\"}[1h])) by (operation)",
+            "legendFormat": "{{operation}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Requests by Language (1h)",
+        "type": "piechart",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "sum(count_over_time(request_operation_duration_ms{env=\"$env\"}[1h])) by (language)",
+            "legendFormat": "{{language}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Top 10 Characters by Request Count",
+        "type": "table",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "topk(10, sum(count_over_time(request_operation_duration_ms{env=\"$env\"}[1h])) by (char_id))",
+            "format": "table",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Request Growth Over Time",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "sum(count_over_time(request_operation_duration_ms{env=\"$env\"}[5m])) by (operation)",
+            "legendFormat": "{{operation}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "stacking": {
+                "mode": "normal"
+              }
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "LLM vs Translation Requests",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "sum(count_over_time(request_operation_duration_ms{operation=~\"llm.*\", env=\"$env\"}[1h]))",
+            "legendFormat": "LLM Requests",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Translation Requests",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "sum(count_over_time(request_operation_duration_ms{operation=~\"translate.*\", env=\"$env\"}[1h]))",
+            "legendFormat": "Translation Requests",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "env",
+          "type": "query",
+          "label": "Environment",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "grafanacloud-prom"
+          },
+          "query": "label_values(request_operation_duration_ms, env)",
+          "current": {
+            "text": "prod",
+            "value": "prod"
+          },
+          "refresh": 1,
+          "sort": 1,
+          "includeAll": true,
+          "multi": true,
+          "allValue": null
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

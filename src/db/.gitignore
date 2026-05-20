@@ -1,0 +1,14 @@
+node_modules
+**/.env
+z*
+.zenv
+**/*.pyc
+.coverage
+.pytest_cache
+.venv
+.venv2
+htmlcov
+directus/.env
+cert
+cert_regular
+cert_recurrent

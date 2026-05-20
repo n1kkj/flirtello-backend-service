@@ -1,0 +1,18 @@
+name: "Message Transformation - Example"
+parse_field: null # No XML parsing needed for transformation
+models:
+  - "openrouter://mistralai/ministral-8b"
+  - "openrouter://cohere/command-r7b-12-2024"
+  - "openrouter://mistralai/mixtral-8x7b-instruct"
+  - "openrouter://sao10k/l3-lunaris-8b"
+  - "openrouter://google/gemma-3n-e4b-it"
+  - "openrouter://microsoft/wizardlm-2-8x22b"
+
+prompts:
+  - "prompts/make_short.md"
+  - "prompts/make_medium.md"
+  - "prompts/make_big.md"
+messages:
+  - "test_messages/message_001_start.md"
+  - "test_messages/message_002_start.md"
+  - "test_messages/message_003_middle.md"

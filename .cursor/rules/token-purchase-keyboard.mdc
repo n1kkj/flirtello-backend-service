@@ -1,0 +1,355 @@
+# Правила работы с клавиатурой покупки токенов
+
+## 1. Общая концепция
+
+В Telegram-боте используются **два типа клавиатур**:
+
+1. **Reply Keyboard** (`keyboard`) - постоянная клавиатура внизу экрана
+   - Кнопка "Get Image 📸" для запроса иллюстраций
+   - Всегда видна пользователю
+   - Создается функцией `create_get_image_keyboard(lang_code)`
+
+2. **Inline Keyboard** (`inline_keyboard`) - кнопки, прикрепленные к конкретному сообщению
+   - Кнопка "Get Tokens 💝" для пополнения баланса
+   - Прикрепляется ТОЛЬКО к сообщению о недостатке токенов
+   - Создается функцией `create_get_tokens_keyboard(lang_code)`
+   - Открывает WebApp для покупки токенов
+
+## 2. Когда показывается клавиатура покупки токенов
+
+### 2.1. Основные сценарии
+
+Inline кнопка "Get Tokens" показывается в следующих случаях:
+
+1. **Недостаточно токенов для текстового сообщения**
+   - Файл: `src/telegram/use_cases/get_response_from_character.py`
+   - Механизм: `NotEnoughCurrencyError` → `insufficient_balance=True` в DTO
+   - Handler: `messages.py`
+
+2. **Недостаточно токенов для генерации иллюстрации**
+   - Файл: `src/telegram/use_cases/get_illustration.py`
+   - Механизм: Pre-check перед генерацией → `insufficient_balance=True`
+   - Handlers: `messages.py`, `photo.py`, `callbacks.py`
+
+3. **Проактивное уведомление при достижении нулевого баланса**
+   - Файл: `src/telegram/lib/insufficient_balance.py`
+   - Механизм: Проверка баланса после успешной обработки запроса
+   - Все handlers в конце обработки
+
+### 2.2. Важные правила
+
+- ❌ **НЕ ИСПОЛЬЗУЙ** сравнение строк: `if message == TemplateMessages.NO_TOKENS.value`
+- ✅ **ИСПОЛЬЗУЙ** флаг DTO: `if message_dto.insufficient_balance`
+
+Это обеспечивает:
+- Явную индикацию намерения (не косвенное сравнение строк)
+- Простоту поддержки (изменение текста не ломает логику)
+- Надежность (не зависит от переводов и форматирования)
+
+## 3. Архитектура решения
+
+### 3.1. DTO Layer
+
+**Файл:** `src/telegram/DTO/chat.py`
+
+```python
+class SendChatMessageOutputSubDTO(BaseModel):
+    message: str
+    attachments: Optional[List[Attachment]] = None
+    message_type: Optional[str] = None
+    insufficient_balance: bool = False  # ← Ключевой флаг!
+```
+
+### 3.2. Use Case Layer
+
+**Установка флага при недостатке средств:**
+
+Use cases (`get_response_from_character.py`, `get_illustration.py`) при возникновении `NotEnoughCurrencyError` возвращают DTO с `insufficient_balance=True` и сообщением `TemplateMessages.NO_TOKENS.value`.
+
+### 3.3. Handler Layer
+
+**Правильная обработка сообщений:**
+
+1. Разделить сообщения на обычные и с `insufficient_balance=True`
+2. Отправить обычные сообщения с `create_get_image_keyboard()`
+3. Отправить NO_TOKENS сообщение ПОСЛЕДНИМ через `send_no_tokens_message_with_keyboards()`
+
+## 4. Единая функция отправки NO_TOKENS с клавиатурами
+
+### 4.1. Проблема Telegram API
+
+**⚠️ ВАЖНО:** Telegram API **НЕ ПОДДЕРЖИВАЕТ** одновременное использование `inline_keyboard` и `keyboard` в одном `reply_markup` объекте.
+
+Если попытаться отправить:
+```json
+{
+  "inline_keyboard": [...],
+  "keyboard": [...]
+}
+```
+
+Telegram API либо проигнорирует один из типов клавиатур, либо вернет ошибку.
+
+### 4.2. Решение: двухшаговая отправка
+
+**Файл:** `src/telegram/lib/insufficient_balance.py`
+
+**Функция:** `send_no_tokens_message_with_keyboards()` в `src/telegram/lib/insufficient_balance.py`
+
+**Алгоритм:**
+1. Опционально удаляет сообщение пользователя (если указано `user_message_id`)
+2. Отправляет сообщение с inline клавиатурой "Get Tokens"
+3. Отправляет временное сообщение с пробелом и reply клавиатурой "Get Image"
+4. Удаляет временное сообщение (reply клавиатура остается активной)
+
+### 4.3. Использование во всех handlers
+
+**✅ ВСЕГДА используйте эту функцию** вместо попыток создать `combined_markup`.
+
+**Параметры:**
+- `sender_chat_id` - Telegram chat ID
+- `message_text` - Текст сообщения (уже переведенный)
+- `token` - Bot token
+- `lang_code` - Код языка пользователя
+- `user_message_id` - Опционально, для удаления сообщения пользователя
+
+**Используется в:**
+- `src/telegram/handlers/messages.py` - обработка текстовых сообщений
+- `src/telegram/handlers/commands/photo.py` - команда `/photo` (2 места)
+- `src/telegram/handlers/commands/start.py` - команда `/start`
+- `src/telegram/handlers/callbacks.py` - callback queries
+- `src/telegram/use_cases/generate_illustration_task.py` - фоновая задача генерации иллюстраций
+- `src/telegram/lib/insufficient_balance.py` - проактивное уведомление о нулевом балансе
+
+## 5. Проверка баланса перед платными действиями
+
+### 5.1. Проверка перед случайным добавлением изображения
+
+**Проблема:** При обработке текстового сообщения система может случайно добавить изображение (random image), но если у пользователя недостаточно токенов, изображение будет сгенерировано бесплатно.
+
+**Решение:** Проверка баланса **ПЕРЕД** вызовом `handle_photo_request()`.
+
+**Файл:** `src/telegram/handlers/messages.py`
+
+Если баланс меньше 1 токена, случайное изображение не добавляется. Обработка продолжается с обычными сообщениями.
+
+### 5.2. Проверка перед командой /photo
+
+**Файл:** `src/telegram/handlers/commands/photo.py`
+
+Проверка баланса выполняется **ПЕРЕД** запросом изображения. Если недостаточно токенов:
+- Отправляется NO_TOKENS через `send_no_tokens_message_with_keyboards()`
+- Удаляется сообщение пользователя "Получить картинку ❤️‍🔥" (если указан `user_message_id`)
+- Функция завершается без генерации изображения
+
+### 5.3. Обработка ошибок при списании токенов
+
+**Проблема:** Если изображение уже сгенерировано, но списание токенов не удалось, изображение не должно быть отправлено пользователю.
+
+**Решение:** Обработка ошибок в `get_illustration()` с откатом транзакции.
+
+**Файл:** `src/telegram/use_cases/get_illustration.py`
+
+Если `async_process_paid_action()` падает с `NotEnoughCurrencyError` или другой ошибкой:
+- Выполняется `session.rollback()` для отката транзакции
+- Возвращается `IllustrationOutputDTO` с `insufficient_balance=True`
+- Изображение НЕ отправляется пользователю
+
+Только при успешном списании выполняется `session.commit()` и возвращается изображение.
+
+## 6. Проактивное уведомление о нулевом балансе
+
+### 6.1. Когда срабатывает
+
+Проверка выполняется **в конце каждого handler'а**, ТОЛЬКО если:
+- Запрос был обработан успешно (НЕ было `insufficient_balance=True`)
+- Баланс пользователя достиг 0 после обработки
+
+### 6.2. Как работает
+
+**Файл:** `src/telegram/lib/insufficient_balance.py`
+
+Функция `check_and_notify_zero_balance()` проверяет баланс пользователя. Если баланс <= 0, отправляет переведенное сообщение "⚠️ Your token balance has reached 0..." через `send_no_tokens_message_with_keyboards()`.
+
+### 6.3. Интеграция в handlers
+
+В конце **КАЖДОГО** handler'а вызывается `check_and_notify_zero_balance()`, но **ТОЛЬКО** если `not has_insufficient_balance` (т.е. запрос прошел успешно).
+
+**Интегрировано в:**
+- `src/telegram/handlers/messages.py` - обработка текстовых сообщений
+- `src/telegram/handlers/commands/photo.py` - команда `/photo`
+- `src/telegram/handlers/commands/start.py` - команда `/start`
+- `src/telegram/handlers/callbacks.py` - выбор персонажа
+
+## 7. Важные особенности порядка отправки
+
+### 7.1. NO_TOKENS всегда последним
+
+**Проблема:** Если отправить сообщение о нехватке токенов, а затем картинку, inline кнопка "потеряется" выше.
+
+**Решение:** Сообщение NO_TOKENS с inline кнопкой ВСЕГДА отправляется последним.
+
+**Алгоритм:**
+
+1. Собрать все сообщения от use case
+2. Отделить сообщения с `insufficient_balance=True`
+3. Отправить обычные сообщения (текст, картинки)
+4. **Последним** отправить NO_TOKENS с комбинированной клавиатурой
+
+### 7.2. Reply keyboard всегда присутствует
+
+Reply keyboard "Get Image" должна показываться при **каждой** отправке сообщения. В случае NO_TOKENS она устанавливается через двухшаговую логику в `send_no_tokens_message_with_keyboards()`.
+
+### 7.3. Удаление сообщения пользователя
+
+При недостатке токенов для команды `/photo` сообщение пользователя "Получить картинку ❤️‍🔥" удаляется для чистоты чата через параметр `user_message_id` в `send_no_tokens_message_with_keyboards()`.
+
+## 8. Отладка и тестирование
+
+### 8.1. Команды для управления балансом
+
+Подробное описание команды `/flashbalance333` см. в [telegram-bot.mdc](telegram-bot.mdc#flashbalancepy---команда-flashbalance333).
+
+**Краткая справка:**
+- `/flashbalance333` - показать текущий баланс
+- `/flashbalance333 <amount>` - установить баланс (создает корректирующую транзакцию)
+- `/flashbalance333 list` - показать последние 10 транзакций
+
+### 8.2. Тестовые сценарии
+
+1. **Текстовое сообщение (0 токенов)**
+   - Установить баланс 0: `/flashbalance333 0`
+   - Отправить "Hello"
+   - Ожидание: NO_TOKENS последним + inline кнопка "Get Tokens" + reply keyboard "Get Image"
+
+2. **Запрос иллюстрации (0 токенов)**
+   - Установить баланс 0: `/flashbalance333 0`
+   - Нажать "Получить картинку ❤️‍🔥" или `/photo`
+   - Ожидание: Сообщение пользователя удалено + NO_TOKENS + inline кнопка + reply keyboard
+
+3. **Случайное изображение (недостаточно токенов)**
+   - Установить баланс 0.5: `/flashbalance333 0.5`
+   - Отправить текстовое сообщение
+   - Ожидание: Ответ персонажа БЕЗ изображения (проверка баланса перед случайным добавлением)
+
+4. **Проактивное уведомление**
+   - Установить баланс 1: `/flashbalance333 1`
+   - Отправить сообщение (баланс станет 0)
+   - Ожидание: Ответ персонажа + доп. сообщение "баланс 0" + клавиатуры
+
+5. **Edge case - ровно на 1 сообщение**
+   - Установить баланс 1: `/flashbalance333 1`
+   - Отправить "Hello" → успешно
+   - Отправить "Hi" → NO_TOKENS + проактивное уведомление
+
+6. **Проверка списания токенов за изображение**
+   - Установить баланс 0.5: `/flashbalance333 0.5`
+   - Запросить изображение (цена = 1 токен)
+   - Ожидание: Изображение НЕ отправлено, транзакция откачена, NO_TOKENS сообщение
+
+## 9. Связанные файлы
+
+### Core Logic
+- `src/telegram/DTO/chat.py` - DTO с флагом `insufficient_balance`
+- `src/telegram/keyboards.py` - создание клавиатур
+
+### Use Cases
+- `src/telegram/use_cases/get_response_from_character.py` - генерация ответов
+- `src/telegram/use_cases/get_illustration.py` - генерация иллюстраций
+
+### Handlers
+- `src/telegram/handlers/messages.py` - текстовые сообщения
+- `src/telegram/handlers/commands/photo.py` - команда `/photo`
+- `src/telegram/handlers/commands/start.py` - команда `/start`
+- `src/telegram/handlers/callbacks.py` - callback queries
+
+### Billing
+- `src/db/lib/billing/balance_transactions.py` - работа с балансом
+- `src/db/lib/billing/paid_actions.py` - списание токенов
+
+### Utilities
+- `src/telegram/lib/insufficient_balance.py` - проактивное уведомление и единая функция отправки NO_TOKENS
+- `src/telegram/handlers/commands/flashbalance.py` - отладочные команды для баланса (см. [telegram-bot.mdc](telegram-bot.mdc#flashbalancepy---команда-flashbalance333))
+
+## 10. Контрольный чеклист при изменениях
+
+При добавлении нового платного действия:
+
+- [ ] Use case устанавливает `insufficient_balance=True` при `NotEnoughCurrencyError`
+- [ ] Handler разделяет сообщения на обычные и с `insufficient_balance`
+- [ ] Обычные сообщения отправляются с `create_get_image_keyboard()`
+- [ ] NO_TOKENS отправляется ПОСЛЕДНИМ через `send_no_tokens_message_with_keyboards()`
+- [ ] Проверка баланса перед платными действиями (случайное изображение, `/photo`)
+- [ ] Обработка ошибок при списании токенов с откатом транзакции
+- [ ] В конце handler'а вызывается `check_and_notify_zero_balance()` (только если не было `insufficient_balance`)
+- [ ] Протестировано с `/flashbalance333` для разных значений баланса
+
+## 11. Частые ошибки
+
+❌ **Сравнение строк вместо флага:**
+```python
+if message.message == TemplateMessages.NO_TOKENS.value:  # ПЛОХО
+```
+
+✅ **Использование флага:**
+```python
+if message.insufficient_balance:  # ХОРОШО
+```
+
+---
+
+❌ **NO_TOKENS не последним:**
+```python
+for msg in all_messages:  # ПЛОХО - порядок не контролируется
+    send(msg)
+```
+
+✅ **NO_TOKENS последним:**
+```python
+for msg in regular_messages:  # ХОРОШО
+    send(msg)
+if has_insufficient_balance:
+    send(NO_TOKENS)  # Последним!
+```
+
+---
+
+❌ **Попытка использовать combined_markup:**
+Создание словаря с одновременным `inline_keyboard` и `keyboard` - Telegram API не поддерживает.
+
+✅ **Использование единой функции:**
+Всегда используйте `send_no_tokens_message_with_keyboards()` для правильной двухшаговой логики.
+
+---
+
+❌ **Отсутствие проверки баланса перед случайным изображением:**
+Вызов `handle_photo_request()` без проверки баланса может привести к бесплатной генерации изображения.
+
+✅ **Проверка баланса перед генерацией:**
+Всегда проверяйте баланс через `async_check_user_have_enough_currency()` перед вызовом `handle_photo_request()`.
+
+---
+
+❌ **Отсутствие обработки ошибок при списании:**
+Если `async_process_paid_action()` падает, изображение все равно отправляется пользователю.
+
+✅ **Обработка ошибок с откатом:**
+Всегда оборачивайте `async_process_paid_action()` в try-except. При ошибке выполняйте `session.rollback()` и возвращайте DTO с `insufficient_balance=True`. Изображение отправляется только после успешного `session.commit()`.
+
+---
+
+## Changelog
+
+- **2025-01-18**: Первая версия документации
+  - Добавлен флаг `insufficient_balance` в DTO
+  - Рефакторинг handlers для правильного порядка сообщений
+  - Реализовано проактивное уведомление о нулевом балансе
+  - Создана команда `/flashbalance333` для тестирования
+
+- **2025-01-19**: Рефакторинг отправки клавиатур
+  - Создана единая функция `send_no_tokens_message_with_keyboards()` для двухшаговой отправки клавиатур
+  - Исправлена проблема с Telegram API (не поддерживает одновременное использование inline_keyboard и keyboard)
+  - Добавлена проверка баланса перед случайным добавлением изображения
+  - Добавлена обработка ошибок при списании токенов с откатом транзакции
+  - Добавлено удаление сообщения пользователя при недостатке токенов для `/photo`
+  - Все handlers теперь используют единую функцию вместо `combined_markup`

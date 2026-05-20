@@ -1,0 +1,14 @@
+#!/bin/bash
+set -x
+tmpdir=$(mktemp -d)
+cp -r supabase $tmpdir || exit 1
+pushd $tmpdir || exit 1
+rm $tmpdir/supabase/config.toml || exit 1
+mv $tmpdir/supabase/config-test.toml $tmpdir/supabase/config.toml || exit 1
+supabase stop && supabase start -x gotrue,realtime,storage-api,imgproxy,kong,inbucket,postgrest,pgadmin-schema-diff,migra,postgres-meta,studio,edge-runtime,logflare,vector,pgbouncer,pg_prove && supabase db reset || exit 1
+popd
+./run-dtest pytest --cov-report term --cov=lib
+pushd $tmpdir
+supabase stop
+docker volume rm $(docker volume ls --filter label=com.supabase.cli.project=flirtello-db-test -q)
+popd

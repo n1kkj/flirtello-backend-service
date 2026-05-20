@@ -1,0 +1,267 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: fff\n"
+"Language: en\n"
+
+#: 
+msgid "hey"
+msgstr "Hey!"
+
+#: 
+msgid "bye"
+msgstr "Bye!"
+
+
+#: 
+msgid "Choose your companion"
+msgstr "Choose your companion"
+
+
+#: 
+msgid "✨ Open all characters"
+msgstr "✨ All characters"
+
+#: 
+msgid "✨ Open web app"
+msgstr "✨ Open web app"
+
+#:
+msgid "Get Tokens 💝"
+msgstr "Get Tokens 💝"
+
+#:
+msgid "Get Image ❤️‍🔥"
+msgstr "Get Image ❤️‍🔥"
+
+#:
+msgid "Continue 💬"
+msgstr "Continue 💬"
+
+#:
+msgid "continue"
+msgstr "continue"
+
+#:
+msgid "Choose your story:\n\n"
+msgstr "Choose your story:\n\n"
+
+#:
+msgid "No configurations available yet."
+msgstr "No configurations available yet."
+
+#:
+msgid "Unknown config"
+msgstr "Unknown config"
+
+#:
+msgid "Config"
+msgstr "Config"
+
+#:
+msgid "Here's a gift for you, darling! 💝 30 free tokens just for you! Let's continue our chat... 😘"
+msgstr "Here's a gift for you, darling! 💝 30 free tokens just for you! Let's continue our chat... 😘"
+
+#:
+msgid "You already have free tokens, darling! 💝 Let's continue our chat... 😘"
+msgstr "You already have free tokens, darling! 💝 Let's continue our chat... 😘"
+
+#:
+msgid "Error: invalid character data"
+msgstr "Error: invalid character data"
+
+#:
+msgid "Error: could not create or find your user. Please send /start to the bot first."
+msgstr "Error: could not create or find your user. Please send /start to the bot first."
+
+#:
+msgid "User error"
+msgstr "User error"
+
+#:
+msgid "Problems loading the picture... 💔"
+msgstr "Problems loading the picture... 💔"
+
+#:
+msgid "Picture file not found... 💔"
+msgstr "Picture file not found... 💔"
+
+#:
+msgid "An internal error occurred while selecting the character."
+msgstr "An internal error occurred while selecting the character."
+
+#:
+msgid "Processing error"
+msgstr "Processing error"
+
+#:
+msgid "Unknown action"
+msgstr "Unknown action"
+
+#:
+msgid "Welcome! 👋\nChoose your first story from the list below or open the full catalog 📚"
+msgstr "🎉 Welcome to the Aiko Lounge!\n\nHere you can safely fulfill fantasies, flirt, have fun and just be yourself.\n\n🎁 We're giving you 10 tokens — try what our characters can do.\n\nStart simple — write something. 😉"
+
+#:
+msgid "No characters available for quick selection yet. Please check the full list!"
+msgstr "No characters available for quick selection yet. Please check the full list!"
+
+#:
+msgid "An error occurred while determining the character. Please try again or select from the /list."
+msgstr "An error occurred while determining the character. Please try again or select from the /list."
+
+#:
+msgid "Please provide a gift code. Usage: /gift YOUR_CODE"
+msgstr "Please provide a gift code. Usage: /gift YOUR_CODE"
+
+#:
+msgid "Congratulations! 💖 You've successfully activated the gift code and received tokens. Enjoy your chat! 💋"
+msgstr "Congratulations! 💖 You've successfully activated the gift code and received tokens. Enjoy your chat! 💋"
+
+#:
+msgid "Gift code activated successfully! ✨"
+msgstr "Gift code activated successfully! ✨"
+
+#:
+msgid "Sorry, darling, that gift code doesn't exist. 💔"
+msgstr "Sorry, darling, that gift code doesn't exist. 💔"
+
+#:
+msgid "Oops! It looks like you've already used this gift code. 😉"
+msgstr "Oops! It looks like you've already used this gift code. 😉"
+
+#:
+msgid "This gift code is no longer active. 😔"
+msgstr "This gift code is no longer active. 😔"
+
+#:
+msgid "An unexpected error occurred. Please try again later. 🙏"
+msgstr "An unexpected error occurred. Please try again later. 🙏"
+
+#:
+msgid "Error: could not find image data."
+msgstr "Error: could not find image data."
+
+#:
+msgid "Error: could not find image file."
+msgstr "Error: could not find image file."
+
+#:
+msgid "Oh darling! 💋 Seems like we ran out of tokens to keep our chat spicy! 🔥 I'd love to continue our special conversation... 😘 Get some free tokens in the rewards section and come back to me! ✨ I'll be waiting for you, sweetie! 💖"
+msgstr "Oh darling! 💋 Seems like we ran out of tokens to keep our chat spicy! 🔥 I'd love to continue our special conversation... 😘 Get some free tokens in the rewards section and come back to me! ✨ I'll be waiting for you, sweetie! 💖"
+
+#:
+msgid "Not today, honey 🫶 (internal error)"
+msgstr "Not today, honey 🫶 (internal error)"
+
+#:
+msgid "Failed to get a response from the character for the illustration."
+msgstr "Failed to get a response from the character for the illustration."
+
+#:
+msgid "Available commands:"
+msgstr "Available commands:"
+
+#:
+msgid "Unknown command: {text}.\nAvailable commands:"
+msgstr "Unknown command: {text}.\nAvailable commands:"
+
+#:
+msgid "\nFull character catalog: {url}"
+msgstr "\nFull character catalog: {url}"
+
+#:
+msgid "Oops, something went wrong with your payment, darling! 💔 Let's try that again, shall we? 😘"
+msgstr "Oops, something went wrong with your payment, darling! 💔 Let's try that again, shall we? 😘"
+
+#:
+msgid "Oh sweetie, looks like you've already paid for this one! 💝 Let's start fresh with a new purchase, shall we? 😉"
+msgstr "Oh sweetie, looks like you've already paid for this one! 💝 Let's start fresh with a new purchase, shall we? 😉"
+
+#:
+msgid "Thank you, gorgeous! 💖 Your payment was successful. Now let's have some fun together! 😘"
+msgstr "Thank you, gorgeous! 💖 Your payment was successful. Now let's have some fun together! 😘"
+
+#:
+msgid "Oh honey, we're not selling tariff plans right now... but I've got something even better for you! 💋"
+msgstr "Oh honey, we're not selling tariff plans right now... but I've got something even better for you! 💋"
+
+#:
+msgid "Oops! I can't find your payment details, darling. 💔 Let's start over and make it perfect this time! 😘"
+msgstr "Oops! I can't find your payment details, darling. 💔 Let's start over and make it perfect this time! 😘"
+
+#:
+msgid "Something's not quite right, sweetie! 🌹 {error_message} Let's try again? 💕"
+msgstr "Something's not quite right, sweetie! 🌹 {error_message} Let's try again? 💕"
+
+#:
+msgid "Oops, darling! 💋 Something's not quite right with your payment data. Let's try that again, shall we? 😘"
+msgstr "Oops, darling! 💋 Something's not quite right with your payment data. Let's try that again, shall we? 😘"
+
+#:
+msgid "Oh no, sweetie! 💔 I can't seem to find your profile. Have we met before? Let's start fresh with /start 😉"
+msgstr "Oh no, sweetie! 💔 I can't seem to find your profile. Have we met before? Let's start fresh with /start 😉"
+
+#:
+msgid "Oh honey! 🌹 Something's not working quite right with our payment processing. Don't worry though - let's try again later or you can always reach out to our support team. They're as friendly as I am! 😘"
+msgstr "Oh honey! 🌹 Something's not working quite right with our payment processing. Don't worry though - let's try again later or you can always reach out to our support team. They're as friendly as I am! 😘"
+
+#:
+msgid "auto (detected: {detected_lang})"
+msgstr "auto (detected: {detected_lang})"
+
+#:
+msgid "Current language: {current_lang}\n\nUsage: /lang [lang]\nSupported languages: ru, en\nUse 'auto' to reset to automatic detection."
+msgstr "Current language: {current_lang}\n\nUsage: /lang [lang]\nSupported languages: ru, en\nUse 'auto' to reset to automatic detection."
+
+#:
+msgid "Current language: {current_lang}\n\nInvalid language '{invalid_lang}'\nUsage: /lang [lang]\nSupported languages: ru, en\nUse 'auto' to reset to automatic detection."
+msgstr "Current language: {current_lang}\n\nInvalid language '{invalid_lang}'\nUsage: /lang [lang]\nSupported languages: ru, en\nUse 'auto' to reset to automatic detection."
+
+#:
+msgid "Language has been reset to automatic detection. 🌐"
+msgstr "Language has been reset to automatic detection. 🌐"
+
+#:
+msgid "Language successfully set to {lang_code}. 💬"
+msgstr "Language successfully set to {lang_code}. 💬"
+
+msgid "I'm already drawing a masterpiece for you! 🎨 Please wait a moment before asking for another one."
+msgstr "I'm already filming a masterpiece for you! 🎨 Please wait a moment before asking for another one."
+
+msgid "Your illustration is being generated... 👨‍🎨"
+msgstr "Creating an art for you dear 👨‍🎨"
+
+msgid "Mmm... 🙈 I was just taking the perfect selfie for you, but my camera got too hot from all this passion! 🔥 Give me another try in a moment, baby... 💋 I promise to make it extra special for you! ✨💖"
+msgstr "Mmm... 🙈 I was just taking the perfect selfie for you, but my camera got too hot from all this passion! 🔥 Give me another try in a moment, baby... 💋 I promise to make it extra special for you! ✨💖"
+
+msgid "Something went wrong, and I'm speechless. 💔"
+msgstr "Something went wrong, and I'm speechless. 💔"
+
+msgid "An unexpected error occurred. Please try again."
+msgstr "An unexpected error occurred. Please try again."
+
+msgid "Typing..."
+msgstr "Typing..."
+
+msgid "welcome_gift_message"
+msgstr "Here's a welcome gift for you😘\n\n10 free tokens! 🤩\n\nUse them to grab photos and chat with any of our characters💃"
+
+#:
+msgid "quiz_onboarding_message"
+msgstr "🎉 Welcome to the Aiko Lounge!\n\nHere you can safely fulfill fantasies, flirt, have fun and just be yourself.\n\nLooks like you've found your perfect match. 💫\n\n🎁 We're giving you 10 tokens — try starting a conversation.\n\nWrite something. 😉"
+
+#:
+msgid "quiz_match_message"
+msgstr "Looks like you've found your perfect match. 💫\n\nStart chatting — write something. 😉"
+
+#:
+msgid "⚠️ Your token balance has reached 0.\nGet more tokens to continue chatting! 💝"
+msgstr "⚠️ Your token balance has reached 0.\nGet more tokens to continue chatting! 💝"
+
+msgid "Something went wrong while preparing your request. Please try again. ❤️"
+msgstr "Something went wrong while preparing your request. Please try again. ❤️"
+

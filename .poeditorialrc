@@ -1,0 +1,23 @@
+fff:
+  defaults:
+    format: po
+    updating: terms
+  languages:
+    en:
+      file: src/telegram/locales/en/LC_MESSAGES/messages.po
+      updating: terms_translations
+      uploadOptionalParams:
+        overwrite: 0
+        sync_terms: 0
+        tags: ""
+        read_from_source: 0
+        fuzzy_trigger: 0
+    ru:
+      file: src/telegram/locales/ru/LC_MESSAGES/messages.po
+      updating: terms_translations
+      uploadOptionalParams:
+        overwrite: 0
+        sync_terms: 0
+        tags: ""
+        read_from_source: 0
+        fuzzy_trigger: 0

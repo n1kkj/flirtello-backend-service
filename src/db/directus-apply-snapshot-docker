@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -a  # automatically export all variables
+source .env
+set +a  # stop automatically exporting
+SNAPSHOT_LOC=`cat last-directus-snapshot.txt`
+echo $SNAPSHOT_LOC
+pushd directus && \
+ docker compose exec directus npx directus schema apply --yes $SNAPSHOT_LOC && \
+ popd

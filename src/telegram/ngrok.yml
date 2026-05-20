@@ -1,0 +1,15 @@
+version: 2
+authtoken: 2sexMPGOY2FDXz3IIDtNIH052Hs_4hhFgFPchgSHp5GhAzjZa
+
+tunnels:
+  webapp:
+    addr: 3000 # Assuming your web app runs on port 3000
+    proto: http
+
+  botwebhook:
+    addr: 48323 # Fixed port to match the running bot
+    proto: http
+
+  backend:
+    addr: 8000 # Assuming your bot webhook runs on port 8000
+    proto: http

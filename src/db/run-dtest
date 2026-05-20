@@ -1,0 +1,17 @@
+#!/bin/bash
+set -ax  # automatically export all variables
+
+source .env-dyn-test
+cat .env-dyn-test
+set +a  # stop automatically exporting
+
+# Run the command passed as arguments to the script
+"$@"
+# Capture the exit code of the command
+command_exit_code=$?
+
+# Clean up
+rm .env-dyn-test
+
+# Exit with the captured exit code
+exit $command_exit_code

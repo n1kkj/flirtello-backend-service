@@ -1,0 +1,8 @@
+#!/bin/bash
+set -x
+#set -a  # automatically export all variables
+source src/telegram/.env.telegram
+#set +a  # stop automatically exporting
+PUBLIC_URL=`curl -s localhost:4040/api/tunnels | jq -r '.tunnels[] | select(.name=="botwebhook") | .public_url'`
+URL=https://api.telegram.org/bot${PERSON_BOT_TOKEN_5}/setWebhook\?url\=${PUBLIC_URL}/webhook/?char_id=5
+curl $URL

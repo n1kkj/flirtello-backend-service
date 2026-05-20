@@ -1,0 +1,11 @@
+services:
+  directus:
+    restart: always
+    image: directus/directus:10.13.1
+    container_name: dir
+    volumes:
+      - './snapshots:/directus/snapshots'
+    ports:
+      - 8056:8056
+    env_file:
+      - .env

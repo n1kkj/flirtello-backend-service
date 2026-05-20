@@ -1,0 +1,17 @@
+{
+    "python.analysis.typeCheckingMode": "basic",
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "black-formatter.args": [
+            "--line-length=101"
+        ],
+    "[python]": {
+            "editor.defaultFormatter": "charliermarsh.ruff",
+            "editor.formatOnSave": true,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": "explicit"
+            },
+        },
+}
