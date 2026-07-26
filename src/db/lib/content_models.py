@@ -286,6 +286,6 @@ class Config(SQLModel, table=True):
     config: str = Field(nullable=False)  # storing yaml as plain text
     path: str = Field(nullable=False)
     status: str = Field(default="draft", max_length=255)
-    background_file_id: Optional[UUID] = Field(nullable=True, foreign_key="content.content_files.id")
+    background_file_id: Optional[UUID] = Field(nullable=True, foreign_key="content.directus_files.id")
     style_name: Optional[str] = Field(nullable=True)
     created_at: datetime = Field(default_factory=datetime.now, nullable=False)
