@@ -96,6 +96,18 @@ class UserDataResponse(BaseModel):
     user_balance_amount: Decimal
     user_metadata: Optional[dict]
 
+def get_fallback_tariff_plan(session: Session) -> TariffPlan:
+    fallback_tariff_plan = (
+        session.exec(
+            select(TariffPlan)
+            .where(TariffPlan.is_archived == False)
+            .order_by(TariffPlan.is_trial.desc(), TariffPlan.order)
+        )
+        .first()
+    )
+    if fallback_tariff_plan is None:
+        raise HTTPException(status_code=404, detail="Tariff plan not found")
+    return fallback_tariff_plan
 
 @router.get("/chat/me")
 async def chat_me(
@@ -105,17 +117,22 @@ async def chat_me(
     user_id = UUID(current_user.user_id)
     user_name = session.exec(select(ChatUser.display_name).where(ChatUser.id == user_id)).first()
     auth_user = session.get(AuthUser, user_id)
+    if auth_user is None:
+        raise HTTPException(status_code=404, detail="Auth user not found")
+
     user_plan = session.get(UserPlan, user_id)
-    user_balance_amount = (
-        session.exec(
-            select(UserBalance)
-            .where(UserBalance.user_id == user_id)
-            .where(UserBalance.balance_type.has(CurrencyType.name == CurrenciesTypes.TOKEN.value))
-        )
-        .first()
-        .balance_amount
-    )
-    tariff_plan = session.get(TariffPlan, user_plan.tariff_plan_id)
+    tariff_plan = get_fallback_tariff_plan(session)
+    if user_plan is None:
+        user_plan = UserPlan(user_id=user_id, tariff_plan_id=tariff_plan.id)
+
+    user_balance = session.exec(
+        select(UserBalance)
+        .where(UserBalance.user_id == user_id)
+        .where(UserBalance.balance_type.has(CurrencyType.name == CurrenciesTypes.TOKEN.value))
+    ).first()
+    user_balance_amount = user_balance.balance_amount if user_balance is not None else Decimal(0)
+
+    tariff_plan = session.get(TariffPlan, user_plan.tariff_plan_id) or tariff_plan
     return UserDataResponse(
         user_id=user_id,
         user_name=user_name,
